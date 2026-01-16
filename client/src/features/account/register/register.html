@@ -1,0 +1,21 @@
+<div class="card bg-base-100 w-1/2 mx-auto flex flex-col p-6 rounded-lg shadow-lg">
+    <div class="card-title justify-center text-3xl text-primary">Sign Up</div>
+    <div class="card-body w-full">
+        <form #registerForm="ngForm" (ngSubmit)="register()" class="flex flex-col gap-4 w-full">
+            <input type="text" class="input w-full" name="email" [(ngModel)]="creds.email" placeholder="email"><!--in questo caso notiamo il two way binding tra template e component-->
+            <input type="text" class="input w-full" name="displayName" [(ngModel)]="creds.displayName" placeholder="name">
+            <input type="password" class="input w-full" name="password" [(ngModel)]="creds.password" placeholder="password">
+            <!-- <select class="select w-full">
+                <option disabled selected>Pick a member</option>
+                @for (member of membersFromHome(); track $index){
+                    <option value="{{member.id}}">{{member.displayName}}</option>
+                }
+            </select> -->
+            <div class="flex items-center justify-end gap-3">
+                <button (click)="cancel()" class="btn" type="button">Cancel</button>
+                <button class="btn btn-primary" type="submit">Register</button>
+            </div>
+        </form>
+
+    </div>
+</div>

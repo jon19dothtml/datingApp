@@ -1,18 +1,23 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit, signal} from '@angular/core';
 import { lastValueFrom } from 'rxjs';
+import { Nav } from '../layout/nav/nav';
+import { AccountService } from '../core/services/account-service';
+import { Home } from "../features/home/home";
+import { User } from '../types/user';
 
 
 @Component({
   selector: 'app-root',
-  imports: [],
+  imports: [Nav, Home],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit{
   private http= inject(HttpClient);
+  private accountService= inject(AccountService);
   protected readonly title = 'Dating App';
-  protected members= signal<any>([]);
+  protected members= signal<User []>([]);
 
   async ngOnInit() { //rappresenta ilciclo di vita del componente
     //ovvero tutto cio che deve essere eseguito quando il componente viene inizializzato
@@ -26,11 +31,19 @@ export class App implements OnInit{
       //   complete: () =>console.log('Request completed') //quando completiamo una richiesta si disiscrive automaticamente
       // })
       this.members.set(await this.getMembers());
+      this.setCurrentUser();
+    }
+
+    setCurrentUser(){
+      const userString= localStorage.getItem('user');
+      if(!userString) return;
+      const user= JSON.parse(userString); //convertiamo la stringa in un oggetto JSON
+      this.accountService.currentUser.set(user); //il signal currentUser non è più null e viene settato con l'utente ottenuto dal localstorage
     }
 
     async getMembers(){
       try{
-        return lastValueFrom(this.http.get('https://localhost:5001/api/members'))
+        return lastValueFrom(this.http.get<User[]>('https://localhost:5001/api/members'))
       }catch(error){
         console.log(error);
         throw error;
