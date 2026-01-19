@@ -1,14 +1,49 @@
-@if(member(); as member){
-    <div class="flex flex-col gap-3">
-        <div class="flex gap-3">
-            <span class="font-semibold">Member Since:</span>
-            <span>{{member.created | date: 'longDate'}}</span>
-        </div>
-        <div class="flex gap-3">
-            <span class="font-semibold">Last Active:</span>
-            <span>{{member.lastActive | date: 'dd MMM yyyy h:mm a'}}</span>
-        </div>
-        <h3 class="text-lg font-semibold text-primary">About {{member.displayName}}:</h3>
-        <div> {{member.description}} </div>
+@if(memberService.member(); as member){
+<div class="flex flex-col gap-3">
+    <div class="flex gap-3">
+        <span class="font-semibold">Member Since:</span>
+        <span>{{member.created | date: 'longDate'}}</span>
     </div>
+    <div class="flex gap-3">
+        <span class="font-semibold">Last Active:</span>
+        <span>{{member.lastActive | date: 'dd MMM yyyy h:mm a'}}</span>
+    </div>
+    <h3 class="text-lg font-semibold text-primary">About {{member.displayName}}:</h3>
+    @if (memberService.editMode()) {
+    <form #editForm="ngForm" (ngSubmit)="updateProfile()" class="flex flex-col w-full gap-4">
+        <!--il form deve avere lo stesso nome che ho nel viewChild -->
+        <label class="floating-label">
+            <span>Display Name</span>
+            <input name="displayName" class="input w-full" [(ngModel)]="editableMember.displayName"
+                placeholder="Display Name">
+            <!-- il placeholder serve per far funzionare la floating label. NgModel per il two-way binding -->
+        </label>
+        <label class="floating-label">
+            <span>description</span>
+            <textarea name="description" class="textarea w-full" [(ngModel)]="editableMember.description"
+                placeholder="Description"></textarea>
+            <!-- il placeholder serve per far funzionare la floating label. NgModel per il two-way binding -->
+        </label>
+        <label class="floating-label">
+            <span>City</span>
+            <input name="city" class="input w-full" [(ngModel)]="editableMember.city"
+                placeholder="City">
+            <!-- il placeholder serve per far funzionare la floating label. NgModel per il two-way binding -->
+        </label>
+        <label class="floating-label">
+            <span>Country</span>
+            <input name="country" class="input w-full" [(ngModel)]="editableMember.country"
+                placeholder="Country">
+            <!-- il placeholder serve per far funzionare la floating label. NgModel per il two-way binding -->
+        </label>
+        <div class="flex self-end">
+            <button 
+            [disabled]="!editForm.dirty" 
+            type="submit" class="btn btn-success">Submit</button> <!--disabled se il form non e' dirty (non e' stato modificato) in questo caso utilizzo l'editForm di ngForm-->
+        </div>
+    </form>
+    }@else {
+    <div> {{member.description}} </div> }
+
+</div>
 }
