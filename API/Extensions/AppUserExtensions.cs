@@ -14,6 +14,7 @@ public static class AppUserExtensions //quando rendiamo static una classe signif
             Id= user.Id,
             Email= user.Email,
             DisplayName= user.DisplayName,
+            ImageUrl= user.ImageUrl,
             Token= tokenService.CreateToken(user)
         };
     }
