@@ -1,4 +1,5 @@
 using API.Data;
+using API.Helpers;
 using API.Interfaces;
 using API.Middleware;
 using API.Services;
@@ -21,7 +22,10 @@ builder.Services.AddScoped<ITokenService, TokenService>();
     //Scoped significa che il servizio viene creato una volta per richiesta http
     //transient significa che viene creato ogni volta che viene richiesto
     //singleton significa che viene creato una volta sola per tutta l'applicazione
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.Configure<CloudinarySettings>(builder.Configuration
+    .GetSection("CloudinarySettings")); // configuriamo le impostazioni di Cloudinary
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -37,10 +41,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 var app = builder.Build();
 
+
+//middleware e services sono due cose diverse, 
+//i middleware sono componenti che elaborano le richieste HTTP 
+//in entrata e possono modificare la risposta HTTP in uscita
+//i servizi sono classi che forniscono funzionalità specifiche all'interno dell'applicazione
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod() 
     .WithOrigins("http://localhost:4200", "https://localhost:4200"));
+//il cors è un middleware che permette di configurare le richieste
+// cross-origin cioè provenienti da domini diversi
 
 app.UseAuthentication(); //prima autenticazione poi autorizzazione
 app.UseAuthorization();

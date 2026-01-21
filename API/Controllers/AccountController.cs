@@ -43,7 +43,7 @@ public class AccountController(AppDbContext context, ITokenService tokenService)
         var user= await context.Users.SingleOrDefaultAsync(x=> x.Email== loginDto.Email);
 
         if(user==null) return Unauthorized("Invalid email");
-
+        //la password salt è un byte array che viene usato per creare l'hash della password
         using var hmac= new HMACSHA512(user.PasswordSalt); //ricreiamo l'istanza di HMACSHA512 con la password salt salvata nel db
         var computedHash= hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password)); //calcoliamo l'hash della password inviata dall'utente
         for (var i=0; i< computedHash.Length; i++) //siccome si tratta di byte array, dobbiamo confrontarli elemento per elemento

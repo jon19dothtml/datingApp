@@ -49,7 +49,7 @@ public class Seed
                 }
             };
 
-            user.Member.photos.Add(new Photo
+            user.Member.Photos.Add(new Photo
             {
                 Url= member.ImageUrl!,
                 MemberId= member.Id

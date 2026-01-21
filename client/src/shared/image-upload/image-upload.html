@@ -1,0 +1,47 @@
+<div class="flex w-full gap-6 min-h-100">
+    <div class="flex items-center gap-4 w-2/3">
+        <label (dragover)="onDragOver($event)" 
+                (dragleave)="onDragLeave($event)" 
+                (drop)="onDrop($event)"
+                [class.border-purple-600]="isDragging"
+                [class.border-4]="isDragging"
+                [class.bg-purple-100]="isDragging" 
+            for="dropzone-file" class="flex flex-col items-center justify-center w-full border-2 border-gray-300
+                h-full border-dashed rounded-lg cursor-pointer">
+            <p class="mb-2 text-lg">Click to upload or drag and drop</p>
+            <input type="file" id="dropzone-file" class="hidden">
+        </label>
+    </div>
+
+    @if(imageSrc()){ <!--- se il signal imageSrc() non è null o undefined ma ha un valore--->
+    <div class="flex flex-col w-1/3 gap-3">
+        <div class="flex justify-center border-2 border-gray-300 rounded-lg">
+            <img src="{{imageSrc()}}" alt="image preview" class="aspect-square object-cover rounded-lg"> <!--- mostro l'anteprima dell'immagine 
+            con {{imageSrc()}} posso vedere il valore del signal imageSrc()--->
+        </div>
+        <div class="flex w-full gap-3">
+            <button (click)="onCancel()" class="btn flex-1">Cancel</button>
+            <button 
+            (click)="onUpload()" 
+            [disabled]="loading()" 
+            class="btn btn-primary">Upload Image</button>
+            @if (loading()) { <!--- se il signal input loading() è true--->
+                <span class="loading loading-spinner"></span>
+            }
+        </div>
+    </div>
+    }
+
+</div>
+
+<!-- 
+(dragover)="onDragOver($event)"  questo evento serve per indicare che un elemento viene trascinato sopra un'area specifica
+(dragleave)="onDragLeave($event)" questo evento serve per indicare che un elemento trascinato esce da un'area specifica
+(drop)="onDrop($event)"  questo evento serve per indicare che un elemento viene rilasciato in un'area specifica 
+[class.borrder-purple-600]="isDragging"  CONDITIONAL STYLING
+[class.borrder-purple-4]="isDragging"
+[class.borrder-purple-100]="isDragging"  
+queste direttive Angular servono per aggiungere o rimuovere classi CSS in base al valore della variabile isDragging.
+se IsDragging è true, le classi verranno aggiunte all'elemento, altrimenti verranno rimosse.
+$event rappresenta l'evento che viene passato al metodo onDragOver, onDragLeave o onDrop quando l'evento viene attivato.
+-->

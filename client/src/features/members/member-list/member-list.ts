@@ -14,7 +14,7 @@ import { MemberCard } from '../member-card/member-card';
 export class MemberList {
   private memberService= inject(MemberService)
   protected members$: Observable<Member[]> //proprietà che memorizza un observable di members
-
+  //utilizzo di async pipe per gestire l'observable direttamente nel template
   constructor(){
     this.members$=this.memberService.getMembers()
   }

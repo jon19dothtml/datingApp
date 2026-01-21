@@ -1,5 +1,6 @@
 <div class="grid grid-cols-5 gap-3">
     @for (member of members$ | async; track member.id) {
-        <app-member-card [member]="member" />
+        <app-member-card [member]="member" /> <!-- passo il singolo member al componente member-card 
+        quel [member] si riferisce al member corrente -->
     }
 </div>

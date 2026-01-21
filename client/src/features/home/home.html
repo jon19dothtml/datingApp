@@ -16,11 +16,14 @@
         </div>
     </div>
     }
-    @else {
+    @else { <!-- se registerMode è true mostra il componente di registrazione -->
         <div class="w-full flex text-2xl text-center justify-center">
             <app-register class="w-full"
             (cancelRegister)="showRegister($event)"  
-            ></app-register> <!--- $event riceve gli eventi in uscita dal nostro componente register -->
+            ></app-register> 
+            <!--- $event riceve gli eventi in uscita dal nostro componente register 
+            qui in pratica eseguo cancelRegister e dico che se viene spinto su cancel-> emit false 
+            e quindi torna indietro altrimenti se rimane true mostra il componente di registrazione -->
         </div>
     }
 

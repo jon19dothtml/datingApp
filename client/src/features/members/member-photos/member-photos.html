@@ -1,13 +1,41 @@
-@if(photos$ | async; as memberPhoto){
-    @if(memberPhoto.length>0){
-        <div class="grid grid-cols-4 auto-rows-min gap-3 p-5 h-[65vh] overflow-auto">
-            @for (photos of memberPhoto; track photos.id) {
-                <img src="{{photos.url}}" alt="photo of member" class="w-full rounded-lg">
-            }
-            @for (photos of photoMocks; track $index) {
-                <img src="{{photos.url}}" alt="photo of member" class="w-full rounded-lg">
-            }
-            
-        </div>
+@if(!memberService.editMode()){
+@if(photos(); as memberPhoto){
+@if(memberPhoto.length>0){
+<div class="grid grid-cols-4 auto-rows-min gap-3 p-5 h-[65vh] overflow-auto">
+    @for ( photo of memberPhoto; track photo.id) {
+    <div class="relative">
+        <img src="{{photo.url}}" alt="photo of member" class="w-full rounded-lg">
+        @if (accountService.currentUser()?.id === memberService.member()?.id) {
+            <app-image-button 
+            (click)="setMainPhoto(photo)" 
+            [fill]="photo.url=== memberService.member()?.imageUrl"
+            [disabled]="photo.url=== memberService.member()?.imageUrl"
+            class="absolute top-1 right-1"
+            />
+
+            <app-delete-button 
+            [disabled]="photo.url=== memberService.member()?.imageUrl"
+            (clicked)="deletePhoto(photo.id)"
+            class="absolute top-1 left-1"
+            />
+        }
+    </div>
     }
+</div>
+}@else {
+<p class="text-center text-gray-500">No photos available</p>
 }
+}
+}@else {
+<app-image-upload (uploadFile)="onUploadImage($event)" [loading]="loading()" />
+<!-- (uploadFile) rappresenta l'evento emesso da ImageUpload quando un file viene selezionato ed è passato al componente padre
+     mentre onUploadImage è il metodo chiamato nel componente padre quando l'evento viene emesso. 
+     Cioè in pratica quando vogliamo inserire un immagine il signal del figlio dice al padre di attivare il metodo onUploadImage
+     invece come parametro di input passiamo a ImageUpload il loading state -->
+}
+
+
+
+<!-- [attr.fill]="photo.url ===memberService.member()?.imageUrl ? 'currentColor' : 'none'" 
+ con questo style condition andrà a controllare se la foto corrente è uguale a quella del member allora 
+ il suo fill sarà 'currentColor' altrimenti 'none' -->

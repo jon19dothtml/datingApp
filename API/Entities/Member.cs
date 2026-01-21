@@ -19,11 +19,11 @@ public class Member
     
     //NAVIGATION PROPERTY
     [JsonIgnore]
-    public List<Photo> photos {get; set;} =[];
+    public List<Photo> Photos {get; set;} =[];
     
     [JsonIgnore]
     [ForeignKey(nameof(Id))]
-    public AppUser user { get; set; } =null!;
+    public AppUser User { get; set; } =null!;
     
 
 }

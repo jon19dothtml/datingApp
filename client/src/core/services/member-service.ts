@@ -35,6 +35,24 @@ export class MemberService {
     return this.http.put(this.baseUrl + 'members', member)
   }
 
+  uploadPhoto(file: File){
+    const formData= new FormData(); //FormData() è una API web che consente di costruire facilmente 
+    // un set di coppie chiave/valore rappresentanti i campi di un modulo e i loro 
+    // valori, che possono essere facilmente inviati utilizzando 
+    // la richiesta XMLHttpRequest o fetch. In questo caso, lo usiamo per inviare un file.
+    formData.append('file', file); // 'file' è il nome del campo che il backend si aspetta
+    return this.http.post<Photo>(this.baseUrl + 'members/add-photo', formData) 
+  }
+
+
+  setMainPhoto(photo: Photo){
+    return this.http.put<Photo>(this.baseUrl + 'members/set-main-photo/' + photo.id, {} )
+  }
+
+  deletePhoto(photoId: number){
+    return this.http.delete(this.baseUrl + 'members/delete-photo/' + photoId)
+  }
+
   // private getHttpOptions(){ no longer required since we have an interceptor to handle this
   //   return{
   //     headers: new HttpHeaders({
