@@ -1,0 +1,36 @@
+import { inject, Injectable, signal } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Member } from '../../types/member';
+import { PaginatedResult } from '../../types/paginations';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class LikesService {
+  private baseUrl= environment.apiUrl;
+  private http= inject(HttpClient);
+  likeIds= signal<string[]>([]); //usiamo questo signal per recuperare gli id dei membri che abbiamo messo like ogni volta che apriamo la pagina dei membri
+
+  toggleLike(targetMemberId:string){
+    return this.http.post(`${this.baseUrl}likes/${targetMemberId}`, {});
+  }
+
+  getLikes(predicate : string, pageNumber : number, pageSize : number){
+    let params= new HttpParams();
+    params= params.append('pageNumber', pageNumber);
+    params= params.append('pageSize', pageSize)
+    params= params.append('predicate', predicate)
+    return this.http.get<PaginatedResult<Member>>(this.baseUrl + 'likes', {params})
+  }
+
+  getLikeIds(){ //recupera gli id dei membri a cui abbiamo messo like
+    return this.http.get<string[]>(this.baseUrl + 'likes/list').subscribe({ //ci iscriviamo direttamente qui perché vogliamo aggiornare il signal ogni volta che recuperiamo gli id
+      next: ids => this.likeIds.set(ids)
+    })
+  }
+
+  clearLikeIds(){
+    this.likeIds.set([]);
+  }
+}
