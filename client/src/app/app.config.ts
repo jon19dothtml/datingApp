@@ -17,9 +17,9 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(async () => {
       const initService = inject(InitService);
       return new Promise<void>((resolve) => {
-        setTimeout(() => {
+        setTimeout(async () => {
           try {
-            return lastValueFrom(initService.init());
+            await lastValueFrom(initService.init());
           } finally {
             const splash = document.getElementById('initial-splash');
             if (splash) {

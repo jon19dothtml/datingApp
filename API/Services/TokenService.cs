@@ -1,16 +1,18 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using API.Entities;
 using API.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services;
 
-public class TokenService(IConfiguration config) : ITokenService
+public class TokenService(IConfiguration config, UserManager<AppUser> userManager) : ITokenService
 {
-    public string CreateToken(AppUser user)
+    public async Task<string> CreateToken(AppUser user)
     {
         //configuriamo la chiave di sicurezza dalla configurazione dell appsettings.json, 
         // otterremo la nostra token key da li, iniettiamo la config tramite IConfiguration
@@ -20,15 +22,18 @@ public class TokenService(IConfiguration config) : ITokenService
         
         var claims= new List<Claim> //creiamo i claims che vogliamo includere nel token
         {
-            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Email, user.Email!),
             new (ClaimTypes.NameIdentifier, user.Id)
         };
+        
+        var roles= await userManager.GetRolesAsync(user);
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
         
         var creds= new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature); //creiamo le credenziali di firma usando la chiave e l'algoritmo di firma HmacSha512
         var tokenDescriptor = new SecurityTokenDescriptor //descriviamo il token
         {
             Subject= new ClaimsIdentity(claims),
-            Expires= DateTime.UtcNow.AddDays(7),
+            Expires= DateTime.UtcNow.AddMinutes(7),
             SigningCredentials= creds
         };
 
@@ -37,5 +42,11 @@ public class TokenService(IConfiguration config) : ITokenService
         var token= tokenHandler.CreateToken(tokenDescriptor); //richiamiamo il metodo per creare il token
 
         return tokenHandler.WriteToken(token); //ritorniamo il token serializzato come stringa
+    }
+
+    public string GenerateRefreshToken()
+    {
+        var randomBytes= RandomNumberGenerator.GetBytes(64);
+        return Convert.ToBase64String(randomBytes); //token a lunga durata che ritornerà al client con un cookie
     }
 }

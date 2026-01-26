@@ -1,9 +1,11 @@
 using API.Data;
+using API.Entities;
 using API.Helpers;
 using API.Interfaces;
 using API.Middleware;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,7 +17,85 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+    opt.UseAsyncSeeding(async (context, _, cancellationToken) =>
+{
+    var adminRole = await context.Set<IdentityRole>().FirstOrDefaultAsync(r => r.Name == "Admin");
+    if (adminRole == null)
+    {
+        await context.Set<IdentityRole>().AddAsync(new IdentityRole
+        {
+            Id = "admin-id",
+            Name = "Admin",
+            NormalizedName = "ADMIN"
+        },
+        cancellationToken
+        );
+    }
+    var memberRole = await context.Set<IdentityRole>().FirstOrDefaultAsync(r => r.Name == "Member");
+    if (memberRole == null)
+    {
+        await context.Set<IdentityRole>().AddAsync(new IdentityRole
+        {
+            Id = "member-id",
+            Name = "Member",
+            NormalizedName = "MEMBER"
+        },
+        cancellationToken
+        );
+    }
+    var moderatorRole = await context.Set<IdentityRole>().FirstOrDefaultAsync(r => r.Name == "Moderator");
+    if (moderatorRole == null)
+    {
+        await context.Set<IdentityRole>().AddAsync(new IdentityRole
+        {
+            Id = "moderator-id",
+            Name = "Moderator",
+            NormalizedName = "MODERATOR"
+        },
+        cancellationToken
+        );
+    }
+    await context.SaveChangesAsync(cancellationToken);
 });
+opt.UseSeeding((context, _) =>
+{
+    var adminRole = context.Set<IdentityRole>().FirstOrDefault(r => r.Name == "Admin");
+    if (adminRole == null)
+    {
+        context.Set<IdentityRole>().Add(new IdentityRole
+        {
+            Id = "admin-id",
+            Name = "Admin",
+            NormalizedName = "ADMIN"
+        }
+        );        
+    }
+    var memberRole = context.Set<IdentityRole>().FirstOrDefault(r => r.Name == "Member");
+    if (memberRole == null)
+    {
+        context.Set<IdentityRole>().Add(new IdentityRole
+        {
+            Id = "member-id",
+            Name = "Member",
+            NormalizedName = "MEMBER"
+        }
+        );
+    }
+    var moderatorRole = context.Set<IdentityRole>().FirstOrDefault(r => r.Name == "Moderator");
+    if (moderatorRole == null)
+    {
+        context.Set<IdentityRole>().Add(new IdentityRole
+        {
+            Id = "moderator-id",
+            Name = "Moderator",
+            NormalizedName = "MODERATOR"
+        }
+        );
+    }
+    context.SaveChanges();
+});
+});
+
 builder.Services.AddCors();
 builder.Services.AddScoped<ITokenService, TokenService>();
     //quando registriamo un servizio abbiamo tre opzioni: transient, scoped e singleton
@@ -29,6 +109,15 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<LogUserActivity>(); //aggiungiamo il nostro action filter come servizio iniettabile
 builder.Services.Configure<CloudinarySettings>(builder.Configuration
     .GetSection("CloudinarySettings")); // configuriamo le impostazioni di Cloudinary
+
+builder.Services.AddIdentityCore<AppUser>(opt=>
+{
+    opt.Password.RequireNonAlphanumeric=false;
+    opt.User.RequireUniqueEmail=true;
+})
+.AddRoles<IdentityRole>()
+.AddEntityFrameworkStores<AppDbContext>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -42,6 +131,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("RequiredAdminRole", policy => policy.RequireRole("Admin"))
+    .AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderator"));
 var app = builder.Build();
 
 
@@ -51,7 +144,7 @@ var app = builder.Build();
 //i servizi sono classi che forniscono funzionalità specifiche all'interno dell'applicazione
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod() 
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
     .WithOrigins("http://localhost:4200", "https://localhost:4200"));
 //il cors è un middleware che permette di configurare le richieste
 // cross-origin cioè provenienti da domini diversi
@@ -66,8 +159,9 @@ var services= scope.ServiceProvider; //get the service provider from the scope
 try
 {
     var context= services.GetRequiredService<AppDbContext>(); //get the dbcontext from the service provider
+    var userManager= services.GetRequiredService<UserManager<AppUser>>();
     await context.Database.MigrateAsync(); //apply any pending migrations
-    await Seed.SeedUser(context);
+    await Seed.SeedUser(userManager);
 }
 catch (Exception ex)
 {
