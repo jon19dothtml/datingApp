@@ -30,6 +30,11 @@ public class Member
     [JsonIgnore] //per non ritornali quando ritorniamo il member
     [ForeignKey(nameof(Id))]
     public AppUser User { get; set; } =null!;
+
+    [JsonIgnore] //per non ritornali quando ritorniamo il member
+    public List<Message> MessagesSent { get; set; }=[];
+    [JsonIgnore] //per non ritornali quando ritorniamo il member
+    public List<Message> MessagesReceived { get; set; }=[];
     
 
 }
