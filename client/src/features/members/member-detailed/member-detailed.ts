@@ -5,6 +5,7 @@ import { Member } from '../../../types/member';
 import { filter } from 'rxjs/internal/operators/filter';
 import { AgePipe } from '../../../core/pipe/age-pipe';
 import { AccountService } from '../../../core/services/account-service';
+import { PresenceService } from '../../../core/services/presence-service';
 
 @Component({
   selector: 'app-member-detailed',
@@ -21,6 +22,7 @@ export class MemberDetailed implements OnInit {
   //ma in questo caso non ci serve piu' perche' usiamo il resolver
   protected accountService= inject(AccountService)
   protected title$= signal<string | undefined>('Profile');
+  protected presenceService= inject(PresenceService)
   protected isCurrentUser= computed(()=> { //il computed è un tipo di signal che usa un altro signal per calcolare il suo stato
     return this.accountService.currentUser()?.id=== this.route.snapshot.paramMap.get('id')
   })

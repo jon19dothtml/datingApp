@@ -4,6 +4,7 @@ using API.Helpers;
 using API.Interfaces;
 using API.Middleware;
 using API.Services;
+using API.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -109,6 +110,8 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<LogUserActivity>(); //aggiungiamo il nostro action filter come servizio iniettabile
 builder.Services.Configure<CloudinarySettings>(builder.Configuration
     .GetSection("CloudinarySettings")); // configuriamo le impostazioni di Cloudinary
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<PresenceTracker>();
 
 builder.Services.AddIdentityCore<AppUser>(opt=>
 {
@@ -129,6 +132,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(tokenKey)),
             ValidateIssuer = false,
             ValidateAudience = false
+        };
+
+        options.Events = new JwtBearerEvents //autenticazione per signalR, 
+        //quindi signalR prima stabilisce una connessione http con il server e capisce quali protocolli e metodi può utilizzare, dopodichè
+        //utilizzerà sempre un webSocket, il webSocket non ha un header, bensì ha dei parametri che ritornano come string, 
+        //tra questi c'è il token che noi prenderemo dalla query del webSocket e la andremo a inserire nel context
+        //dove poi ci servirà accedere per autorizzare le richieste di accesso al presenceHub.
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken= context.Request.Query["access_token"];
+                var path= context.HttpContext.Request.Path;
+                if(!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                {
+                    context.Token= accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -152,6 +174,8 @@ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
 app.UseAuthentication(); //prima autenticazione poi autorizzazione
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<MessageHub>("hubs/messages");
 
 //andiamo ad automatizzare migration e se non ci sono utenti andiamo a fare seeding
 using var scope= app.Services.CreateScope(); //createScope serve per creare un ambito per i servizi con scoped lifetime
@@ -161,6 +185,12 @@ try
     var context= services.GetRequiredService<AppDbContext>(); //get the dbcontext from the service provider
     var userManager= services.GetRequiredService<UserManager<AppUser>>();
     await context.Database.MigrateAsync(); //apply any pending migrations
+    await context.Connections.ExecuteDeleteAsync(); 
+    // La riga precedente ci cancellerà ogni volta al riavvio, le connessioni presenti, 
+    // altrimenti un utente una volta entrato in una connection, quando verrà
+    //  riavviato il server verrà visto come connesso anche se non lo è 
+    // e quindi i suoi messaggi verranno sempre contrassegnati come letti 
+    // anche se non online
     await Seed.SeedUser(userManager);
 }
 catch (Exception ex)

@@ -4,6 +4,8 @@ import { LoginCreds, RegisterCreds, User } from '../../types/user';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LikesService } from './likes-service';
+import { PresenceService } from './presence-service';
+import { HubConnection, HubConnectionState } from '@microsoft/signalr';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +14,7 @@ export class AccountService {
   private http= inject(HttpClient);
   currentUser= signal<User | null>(null);
   private likeService= inject(LikesService)
+  private presenceService= inject(PresenceService)
   private baseUrl= environment.apiUrl;
 
   register(creds: RegisterCreds){
@@ -61,6 +64,9 @@ export class AccountService {
     //localStorage.setItem('user', JSON.stringify(user)); //il metodo setItem salva nel localstorage del browser una chiave e un valore
     this.currentUser.set(user); //in questo caso il nostro http post non sa cosa ritorna, quindi per sapere che si tratta di un user bisogna specificarlo sopra tra <>
     this.likeService.getLikeIds() //ogni volta che ci logghiamo recuperiamo gli id dei membri a cui abbiamo messo like. ripopoliamo il signal
+    if(this.presenceService.hubConnection?.state !== HubConnectionState.Connected){
+      this.presenceService.createHubConnection(user)
+    }
   }
 
   logout(){
@@ -68,6 +74,7 @@ export class AccountService {
     localStorage.removeItem('filters');
     this.currentUser.set(null);
     this.likeService.clearLikeIds(); //puliamo il signal quando facciamo logout
+    this.presenceService.stopHubConnection();
   }
 
   private getRolesFromToken(user:User): string []{

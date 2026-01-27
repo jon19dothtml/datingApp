@@ -3,6 +3,7 @@ import { Member } from '../../../types/member';
 import { RouterLink } from '@angular/router';
 import { AgePipe } from '../../../core/pipe/age-pipe';
 import { LikesService } from '../../../core/services/likes-service';
+import { PresenceService } from '../../../core/services/presence-service';
 
 @Component({
   selector: 'app-member-card',
@@ -16,7 +17,10 @@ export class MemberCard {
   // per ogni member crea un member-card e gli passa il member corrente come input
   member= input.required<Member>();
   private likeService= inject(LikesService);
+  private presenceService= inject(PresenceService)
   protected hasLiked= computed(()=> this.likeService.likeIds().includes(this.member().id)) // con questo computed signal calcoliamo se la card che viene mostrata è piaciuta al currentUser
+  protected isOnline= computed(() =>
+    this.presenceService.onlineUsers().includes(this.member().id))
 
   toggleLike(event:Event){
     event.stopPropagation(); //evita la propagazione delle route verso il profilo del member
