@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class LikesController(ILikesRepository likesRepository) : BaseApiController
+public class LikesController(IUnitOfWork ouw) : BaseApiController
 {
     [HttpPost("{targetMemberId}")]
     public async Task<ActionResult> ToggleLike(string targetMemberId) // mette o toglie il like in base al suo status (se non esiste, lo mette altrimenti lo toglie)
@@ -17,7 +17,7 @@ public class LikesController(ILikesRepository likesRepository) : BaseApiControll
 
         if(sourceMemberId==targetMemberId) return BadRequest("You can't like yourself");
 
-        var existingLike= await likesRepository.GetMemberLike(sourceMemberId, targetMemberId);
+        var existingLike= await ouw.LikesRepository.GetMemberLike(sourceMemberId, targetMemberId);
 
         if (existingLike == null)
         {
@@ -26,14 +26,14 @@ public class LikesController(ILikesRepository likesRepository) : BaseApiControll
                 SourceMemberId= sourceMemberId,
                 TargetMemberId=targetMemberId
             };
-            likesRepository.AddLike(like);
+            ouw.LikesRepository.AddLike(like);
         }
         else
         {
-            likesRepository.DeleteLike(existingLike);
+            ouw.LikesRepository.DeleteLike(existingLike);
         }
 
-        if (await likesRepository.SaveAllChanges()) return Ok();
+        if (await ouw.Complete()) return Ok();
 
         return BadRequest("Failed to upload like");
     }
@@ -41,14 +41,14 @@ public class LikesController(ILikesRepository likesRepository) : BaseApiControll
     [HttpGet("list")]
     public async Task<ActionResult<IReadOnlyList<string>>> GetCurrentMemberLikeIds() //visualizziamo chi piace al currentUser
     {
-        return Ok(await likesRepository.GetCurrentMemberLikeIds(User.GetMemberId())); 
+        return Ok(await ouw.LikesRepository.GetCurrentMemberLikeIds(User.GetMemberId())); 
     }
 
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<Member>>>GetMemberLikes([FromQuery] LikesParams likesParams)
     {
         likesParams.UserId= User.GetMemberId();
-        var members= await likesRepository.GetMemberLikes(likesParams);
+        var members= await ouw.LikesRepository.GetMemberLikes(likesParams);
         return Ok(members);
     } //qui possiamo visualizzare a chi ho messo mi piace, chi l'ha messo a me e mutual
 }

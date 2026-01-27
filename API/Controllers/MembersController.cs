@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers
 {
     [Authorize]
-    public class MembersController(IMemberRepository memberRepository, 
+    public class MembersController(IUnitOfWork uow, 
         IPhotoService photoService) : BaseApiController
     {
         [HttpGet]
@@ -19,13 +19,13 @@ namespace API.Controllers
             [FromQuery] MemberParams memberParams) //siccome dobbiamo passare questo parametro come query e non come object useremo [FromQuery]
         {
             memberParams.CurrentMemberId=User.GetMemberId(); //ci settiamo il member id
-            return Ok(await memberRepository.GetMembersAsync(memberParams));
+            return Ok(await uow.MemberRepository.GetMembersAsync(memberParams));
         }
 
         [HttpGet("{id}")]   //localhost:5001/api/members/bob-id
         public async Task<ActionResult<Member>> GetMember(string id)
         {
-            var member= await memberRepository.GetMemberByIdAsync(id);
+            var member= await uow.MemberRepository.GetMemberByIdAsync(id);
             if(member == null)
             {
                 return base.BadRequest("No user found");
@@ -36,7 +36,7 @@ namespace API.Controllers
         [HttpGet("{id}/photos")]
         public async Task<ActionResult<IReadOnlyList<Photo>>> GetMemberPhotos(string id)
         {
-            return Ok(await memberRepository.GetPhotosByMemberIdAsync(id));
+            return Ok(await uow.MemberRepository.GetPhotosByMemberIdAsync(id));
         }
 
         [HttpPut]
@@ -51,7 +51,7 @@ namespace API.Controllers
             //usiamo User perchè è un oggetto di tipo ClaimsPrincipal
             
 
-            var member= await memberRepository.getMemberForUpdate(memberId);
+            var member= await uow.MemberRepository.getMemberForUpdate(memberId);
             if(member == null) return BadRequest("Member not found");
             //aggiorniamo le proprietà dell'utente con i valori del DTO
             member.DisplayName= memberUpdateDto.DisplayName ?? member.DisplayName;
@@ -60,15 +60,15 @@ namespace API.Controllers
             member.Country= memberUpdateDto.Country ?? member.Country;
             member.User.DisplayName= memberUpdateDto.DisplayName ?? member.User.DisplayName;
 
-            memberRepository.Update(member); //segniamo l'entità come modificata
-            if(await memberRepository.SaveAllAsync()) return NoContent(); //se il salvataggio va a buon fine, ritorniamo 204 no content
+            uow.MemberRepository.Update(member); //segniamo l'entità come modificata
+            if(await uow.Complete()) return NoContent(); //se il salvataggio va a buon fine, ritorniamo 204 no content
             return BadRequest("Failed to update member");
         }
 
         [HttpPost("add-photo")]
         public async Task<ActionResult<Photo>> AddPhoto([FromForm] IFormFile file)
         {
-            var member= await memberRepository.getMemberForUpdate(User.GetMemberId()); //ci recuperiamo il membro loggato
+            var member= await uow.MemberRepository.getMemberForUpdate(User.GetMemberId()); //ci recuperiamo il membro loggato
 
             if(member==null) return BadRequest("Cannot Update Member");
 
@@ -90,14 +90,14 @@ namespace API.Controllers
 
             member.Photos.Add(photo); //aggiungiamo la foto alla collezione di foto del membro
 
-            if(await memberRepository.SaveAllAsync()) return photo; //se il salvataggio va a buon fine, ritorniamo la foto
+            if(await uow.Complete()) return photo; //se il salvataggio va a buon fine, ritorniamo la foto
             return BadRequest("Problem adding Photo");
         }
 
         [HttpPut("set-main-photo/{photoId}")]
         public async Task<ActionResult> SetMainPhoto(int photoId)
         {
-            var member= await memberRepository.getMemberForUpdate(User.GetMemberId());
+            var member= await uow.MemberRepository.getMemberForUpdate(User.GetMemberId());
             if(member==null) return BadRequest("Cannot get the member from token");
             var photo= member.Photos.SingleOrDefault(x=> x.Id== photoId); //registriamo la foto che vogliamo prendere come principale
             if(member.ImageUrl==photo?.Url || photo== null) //controlliamo se la foto principale che l'utente ha già non è quella che vogliamo impostare noi
@@ -108,7 +108,7 @@ namespace API.Controllers
             member.ImageUrl=photo.Url;
             member.User.ImageUrl= photo.Url;
 
-            if(await memberRepository.SaveAllAsync()) return NoContent();
+            if(await uow.Complete()) return NoContent();
 
             return BadRequest("Problem settings main photo");
         }
@@ -117,7 +117,7 @@ namespace API.Controllers
     [HttpDelete("delete-photo/{photoId}")]
     public async Task<ActionResult> DeletePhoto(int photoId)
     {
-        var member= await memberRepository.getMemberForUpdate(User.GetMemberId()); //ci recuperiamo il membro loggato
+        var member= await uow.MemberRepository.getMemberForUpdate(User.GetMemberId()); //ci recuperiamo il membro loggato
         
         if(member==null) return BadRequest("Cannot get the member from token");
         
@@ -137,7 +137,7 @@ namespace API.Controllers
 
         member.Photos.Remove(photo); //rimuoviamo la foto dalla collezione di foto del membro
 
-        if(await memberRepository.SaveAllAsync()) return Ok(); //
+        if(await uow.Complete()) return Ok(); //
 
         return BadRequest("Problem deleting photo");
     }

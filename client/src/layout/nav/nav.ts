@@ -21,6 +21,7 @@ export class Nav implements OnInit{
   private router = inject(Router);
   protected selectedTheme= signal<string>(localStorage.getItem('theme') || 'light')
   protected themes= themes;
+  protected loading= signal(false);
 
   ngOnInit(): void {
     document.documentElement.setAttribute('data-theme', this.selectedTheme())
@@ -34,7 +35,13 @@ export class Nav implements OnInit{
     if(elem) elem.blur()
   }
 
+  handSelectUserItem(){
+    const elem= document.activeElement as HTMLDivElement; //per far chiudere la dropdown una volta selezionato
+    if(elem) elem.blur()
+  }
+
   login(){
+    this.loading.set(true);
     this.accountService.login(this.creds).subscribe({ //ricordarsi di sottoscrivere l'observable ritornato dal metodo login
       next: () => { 
         this.router.navigateByUrl('/members');
@@ -46,6 +53,9 @@ export class Nav implements OnInit{
         //usiamo error.error perchè l'errore ritornato dal backend è 
         // un HttpErrorResponse che contiene varie proprietà, 
         // tra cui error che contiene il messaggio di errore vero e proprio
+      },
+      complete: ()=> {
+        this.loading.set(false);
       }
     })
   }

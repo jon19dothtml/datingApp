@@ -10,7 +10,7 @@ using Microsoft.Extensions.Primitives;
 namespace API.SignalR;
 
 [Authorize]
-public class MessageHub(IMessageRepository messageRepository, IMemberRepository memberRepository, 
+public class MessageHub(IUnitOfWork uow, 
     IHubContext<PresenceHub> presenceHub) : Hub
 {
     public override async Task OnConnectedAsync()
@@ -22,7 +22,7 @@ public class MessageHub(IMessageRepository messageRepository, IMemberRepository 
         var groupName= GetGroupName(GetUserId(), otherUser);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         await AddToGroup(groupName); //aggiungiamo al db il nome del group
-        var messages= await messageRepository.GetMessageThread(GetUserId(), otherUser);
+        var messages= await uow.MessageRepository.GetMessageThread(GetUserId(), otherUser);
 
         await Clients.Group(groupName).SendAsync("RecieveMessageThread", messages);
 
@@ -30,8 +30,8 @@ public class MessageHub(IMessageRepository messageRepository, IMemberRepository 
 
     public async Task SendMessage(CreateMessageDto createMessageDto)
     {
-        var sender= await memberRepository.GetMemberByIdAsync(GetUserId());  //User.GetMemberId() è un’altra extension method che legge l’ID dell’utente loggato dal JWT
-        var recipient= await memberRepository.GetMemberByIdAsync(createMessageDto.RecipientId); //prendiamo il destinatario dal dto che passiamo quando richiamiamo l'api POST
+        var sender= await uow.MemberRepository.GetMemberByIdAsync(GetUserId());  //User.GetMemberId() è un’altra extension method che legge l’ID dell’utente loggato dal JWT
+        var recipient= await uow.MemberRepository.GetMemberByIdAsync(createMessageDto.RecipientId); //prendiamo il destinatario dal dto che passiamo quando richiamiamo l'api POST
         if(sender == null || recipient== null || sender.Id == createMessageDto.RecipientId)
         {
             throw new HubException("Cannot send message");
@@ -44,15 +44,15 @@ public class MessageHub(IMessageRepository messageRepository, IMemberRepository 
         };
 
         var groupName= GetGroupName(sender.Id, recipient.Id);
-        var group= await messageRepository.GetMessageGroup(groupName);
+        var group= await uow.MessageRepository.GetMessageGroup(groupName);
         var userInGroup= group != null && group.Connections.Any(x => x.UserId == message.RecipientId);
 
         if(userInGroup) //controlliamo se user e recipient sono in questo gruppo
         {
             message.DateRead = DateTime.UtcNow; 
         }
-        messageRepository.AddMessage(message);
-        if(await messageRepository.SaveAllAsync())
+        uow.MessageRepository.AddMessage(message);
+        if(await uow.Complete())
         {
             await Clients.Group(groupName).SendAsync("NewMessage", message.ToDto());
             var connections= await PresenceTracker.GetConnectionsForUser(recipient.Id);
@@ -66,24 +66,24 @@ public class MessageHub(IMessageRepository messageRepository, IMemberRepository 
 
     public override async Task OnDisconnectedAsync(Exception? exception) //quando un utente su disconnette dal signalR, automaticamente viene rimosso dal group
     {
-        await messageRepository.RemoveConnection(Context.ConnectionId);
+        await uow.MessageRepository.RemoveConnection(Context.ConnectionId);
         await base.OnDisconnectedAsync(exception);
     }
 
     //quando ci connettiamo all'hub vogliamo aggiungere l'utente al gruppo e persistere la sua connessione nel db
     private async Task<bool> AddToGroup(string groupName) 
     {
-        var group= await messageRepository.GetMessageGroup(groupName);
+        var group= await uow.MessageRepository.GetMessageGroup(groupName);
         var connection = new Connection(Context.ConnectionId, GetUserId());
 
         if(group == null)
         {
             group= new Group(groupName);
-            messageRepository.AddGroup(group);
+            uow.MessageRepository.AddGroup(group);
         }
 
         group.Connections.Add(connection);
-        return await messageRepository.SaveAllAsync();
+        return await uow.Complete();
     }
 
     private static string GetGroupName(string? caller, string? other)
@@ -99,3 +99,5 @@ public class MessageHub(IMessageRepository messageRepository, IMemberRepository 
         return Context.User?.GetMemberId() ?? throw new HubException("Cannot get member id");
     }
 }
+
+

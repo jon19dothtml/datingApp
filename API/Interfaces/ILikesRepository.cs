@@ -11,6 +11,6 @@ public interface ILikesRepository
     Task<IReadOnlyList<string>> GetCurrentMemberLikeIds(string memberId); //ritorna una lista di stringhe con gli id dei membri a cui l'utente corrente ha messo like
     void DeleteLike(MemberLike like);
     void AddLike(MemberLike like);
-    Task<bool> SaveAllChanges();
+    
 
 }

@@ -6,6 +6,7 @@ import { filter } from 'rxjs/internal/operators/filter';
 import { AgePipe } from '../../../core/pipe/age-pipe';
 import { AccountService } from '../../../core/services/account-service';
 import { PresenceService } from '../../../core/services/presence-service';
+import { LikesService } from '../../../core/services/likes-service';
 
 @Component({
   selector: 'app-member-detailed',
@@ -23,9 +24,19 @@ export class MemberDetailed implements OnInit {
   protected accountService= inject(AccountService)
   protected title$= signal<string | undefined>('Profile');
   protected presenceService= inject(PresenceService)
+  protected likesService= inject(LikesService);
+  private routeId = signal<string | null>(null);
   protected isCurrentUser= computed(()=> { //il computed è un tipo di signal che usa un altro signal per calcolare il suo stato
-    return this.accountService.currentUser()?.id=== this.route.snapshot.paramMap.get('id')
-  })
+    return this.accountService.currentUser()?.id=== this.routeId()
+  });
+  protected hasLiked= computed(()=> this.likesService.likeIds().includes(this.routeId()!)) // con questo computed signal calcoliamo se la card che viene mostrata è piaciuta al currentUser
+
+
+  constructor(){
+    this.route.paramMap.subscribe( params=> {
+      this.routeId.set(params.get('id'))
+    })
+  }
 
     ngOnInit(): void {
 

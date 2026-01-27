@@ -71,10 +71,15 @@ export class AccountService {
 
   logout(){
     //localStorage.removeItem('user');
-    localStorage.removeItem('filters');
-    this.currentUser.set(null);
-    this.likeService.clearLikeIds(); //puliamo il signal quando facciamo logout
-    this.presenceService.stopHubConnection();
+    this.http.post(this.baseUrl + 'account/logout', {}, {withCredentials: true}).subscribe({
+      next: ()=> {
+        localStorage.removeItem('filters');
+        this.currentUser.set(null);
+        this.likeService.clearLikeIds(); //puliamo il signal quando facciamo logout
+        this.presenceService.stopHubConnection();
+      }
+    })
+    
   }
 
   private getRolesFromToken(user:User): string []{

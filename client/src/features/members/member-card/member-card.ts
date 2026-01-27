@@ -24,15 +24,24 @@ export class MemberCard {
 
   toggleLike(event:Event){
     event.stopPropagation(); //evita la propagazione delle route verso il profilo del member
-    this.likeService.toggleLike(this.member().id).subscribe({
-      next: () => {
-        if(this.hasLiked()){
-          this.likeService.likeIds.update(ids=> ids.filter(x=> x!== this.member().id)) //rimuoviamo il like
-
-        }else{
-          this.likeService.likeIds.update(ids=> [...ids, this.member().id])
-        }
-      }
-    })
+    this.likeService.toggleLike(this.member().id)
   }
 }
+
+
+
+//VEcchio metodo dove ci iscrivavamo alla richiesta http all interno del componente
+//ORA INVECE LO FACCIAMO NEL LIKESERVICE
+// toggleLike(event:Event){
+//     event.stopPropagation(); //evita la propagazione delle route verso il profilo del member
+//     this.likeService.toggleLike(this.member().id).subscribe({
+//       next: () => {
+//         if(this.hasLiked()){
+//           this.likeService.likeIds.update(ids=> ids.filter(x=> x!== this.member().id)) //rimuoviamo il like
+
+//         }else{
+//           this.likeService.likeIds.update(ids=> [...ids, this.member().id])
+//         }
+//       }
+//     })
+//   }
