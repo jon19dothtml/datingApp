@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, inject, input, OnInit, signal, ViewChild } from '@angular/core';
 import { MemberService } from '../../../core/services/member-service';
 import { Member, MemberParams } from '../../../types/member';
 import { MemberCard } from '../member-card/member-card';
@@ -6,6 +6,7 @@ import { PaginatedResult } from '../../../types/paginations';
 import { Paginator } from '../../../shared/paginator/paginator';
 import { FilterModal } from '../../filter-modal/filter-modal';
 import { filter } from 'rxjs';
+import { ToastService } from '../../../core/services/toast-service';
 
 @Component({
   selector: 'app-member-list',
@@ -21,6 +22,9 @@ export class MemberList implements OnInit{
   @ViewChild('filterModal') modal!: FilterModal //passiamo il riferimento di filter modal al padre del componente che è padre del template dove si trova filterModal
   protected memberParams= new MemberParams();
   private updatedParams= new MemberParams();
+  protected cities =signal<string[]>([]);
+  protected countries =signal<string[]>([]);
+  protected toast= inject(ToastService)
 
   constructor(){
     const filters= localStorage.getItem('filters')
@@ -32,6 +36,7 @@ export class MemberList implements OnInit{
 
   ngOnInit(): void {
     this.loadMembers()
+    this.getCities()
   }
 
   loadMembers(){
@@ -57,6 +62,12 @@ export class MemberList implements OnInit{
   }
 
   onFilterChange(data:MemberParams){
+    console.log("memberParams", this.memberParams.country)
+    // foreach(item in countries()){
+    //   if(this.memberParams.country!== item){
+
+    //   }
+    // }
     this.memberParams= {...data}; //creo una copia di dati che quindi mi ritorna i dati non aggiornati fin quando non spingo su submit
     this.updatedParams={...data};
     this.loadMembers()
@@ -86,4 +97,26 @@ export class MemberList implements OnInit{
 
     return filters.length > 0 ? `Selected ${filters.join(' | ')}` : 'All Members' 
   }
+
+  getCities(){
+    this.memberService.getCities().subscribe({
+      next: response => {
+        // console.log(response),
+        this.cities.set(response)
+        // console.log(this.cities())
+      }
+    })
+  }
+
+  getCountries(){
+    this.memberService.getCountries().subscribe({
+      next: response => {
+        this.countries.set(response)
+      }
+    })
+  }
 }
+function foreach(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
+

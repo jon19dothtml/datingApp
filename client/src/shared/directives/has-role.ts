@@ -6,12 +6,14 @@ import { AccountService } from '../../core/services/account-service';
 })
 export class HasRole implements OnInit{
 
-  @Input() appHasRole: string[]=[]
+  @Input() appHasRole: string[]= []
   private accountService= inject(AccountService)
   private viewContainerRef = inject(ViewContainerRef) //SPECIFICA cosa l'utente vedrà in questo container
   private templateRef= inject(TemplateRef);
 
   ngOnInit(): void {
+    console.log('user', this.accountService.currentUser())
+    
     if(this.accountService.currentUser()?.roles?.some(r=> this.appHasRole.includes(r))){
       this.viewContainerRef.createEmbeddedView(this.templateRef);
     }else{

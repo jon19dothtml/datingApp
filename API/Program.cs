@@ -1,10 +1,11 @@
-using API.Data;
-using API.Entities;
-using API.Helpers;
-using API.Interfaces;
 using API.Middleware;
-using API.Services;
-using API.SignalR;
+using Infrastructure.Services;
+using Infrastructure.SignalR;
+using Core.Entities;
+using Core.Helpers;
+using Core.Interfaces;
+using Infrastructure.Data;
+using Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
-    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     opt.UseAsyncSeeding(async (context, _, cancellationToken) =>
 {
     var adminRole = await context.Set<IdentityRole>().FirstOrDefaultAsync(r => r.Name == "Admin");
@@ -171,9 +172,14 @@ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
 
 app.UseAuthentication(); //prima autenticazione poi autorizzazione
 app.UseAuthorization();
+//per la pubblicazione il localhost verra servito nella cartella www
+app.UseDefaultFiles();
+app.UseStaticFiles(); //per utilizzare il middleware nella pubblicazione
+
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
 app.MapHub<MessageHub>("hubs/messages");
+app.MapFallbackToController("Index", "Fallback");
 
 //andiamo ad automatizzare migration e se non ci sono utenti andiamo a fare seeding
 using var scope= app.Services.CreateScope(); //createScope serve per creare un ambito per i servizi con scoped lifetime

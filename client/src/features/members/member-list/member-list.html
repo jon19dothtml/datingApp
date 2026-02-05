@@ -26,14 +26,22 @@
                         quel [member] si riferisce al member corrente -->
             }
             </div>
+            
         }
     </div>
+        <!-- @for (city of cities(); track $index) {
+            <div>Citta: {{city}}</div>
+        } -->
 }
 
 <app-filter-modal 
     #filterModal
     [hidden]="!paginatedMembers()" 
     [memberParams]="memberParams"
+    [cities]="cities()"
     (closeModal)="onClose()" 
     (submitData)="onFilterChange($event)" 
 />
+
+
+

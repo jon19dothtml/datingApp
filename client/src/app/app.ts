@@ -25,7 +25,7 @@ export class App {
   //   //per richiamare un componenente http dobbiamo iniettarlo nel costruttore 
   //   //e per usare una proprietà dobbiamo usare il this.
   //   //questa http ci ritorna un observable quindi dobbiamo iscriverci a questo observable
-  //     // this.http.get('https://localhost:5001/api/members').subscribe({ //subscribe per gestire la risposta asincrona
+  //     // this.http.get('apiUrl/members').subscribe({ //subscribe per gestire la risposta asincrona
   //     //   next: response => this.members.set(response), //il subscribe gestisce tre casi: next, error, complete
   //     //   error: error =>console.log(error),
   //     //   complete: () =>console.log('Request completed') //quando completiamo una richiesta si disiscrive automaticamente
@@ -35,7 +35,7 @@ export class App {
 
   // async getMembers(){
   //   try{
-  //     return lastValueFrom(this.http.get<User[]>('https://localhost:5001/api/members'))
+  //     return lastValueFrom(this.http.get<User[]>('apiUrl/members'))
   //   }catch(error){
   //     console.log(error);
   //     throw error;

@@ -24,6 +24,8 @@ export class MemberService {
     params= params.append('maxAge', memberParams.maxAge)
     params= params.append('orderBy', memberParams.orderBy)
     if(memberParams.gender) params= params.append('gender', memberParams.gender)
+    if(memberParams.city) params= params.append('city', memberParams.city)
+    if(memberParams.country) params= params.append('country', memberParams.country)
 
     return this.http.get<PaginatedResult<Member>>(this.baseUrl + 'members', {params}).pipe(
       tap(() => {
@@ -64,6 +66,14 @@ export class MemberService {
 
   deletePhoto(photoId: number){
     return this.http.delete(this.baseUrl + 'members/delete-photo/' + photoId)
+  }
+
+  getCities(){
+    return this.http.get<string[]>(this.baseUrl + 'members/cities')
+  }
+
+  getCountries(){
+    return this.http.get<string[]>(this.baseUrl + "members/cities")
   }
 
   // private getHttpOptions(){ no longer required since we have an interceptor to handle this

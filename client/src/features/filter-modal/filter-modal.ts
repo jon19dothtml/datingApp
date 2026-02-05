@@ -1,6 +1,7 @@
-import { Component, ElementRef, model, output, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, Input, model, output, ViewChild } from '@angular/core';
 import { MemberParams } from '../../types/member';
 import { FormsModule } from '@angular/forms';
+import { MemberService } from '../../core/services/member-service';
 
 @Component({
   selector: 'app-filter-modal',
@@ -14,6 +15,8 @@ export class FilterModal {
   closeModal=output(); //per chiudere modal
   submitData= output<MemberParams>()
   memberParams= model(new MemberParams());
+  @Input() cities: string[] = [];
+  
 
   constructor(){
     const filters= localStorage.getItem('filters')

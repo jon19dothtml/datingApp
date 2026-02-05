@@ -39,7 +39,7 @@ export class MemberPhotos implements OnInit {
         this.memberService.editMode.set(false); // disabilitiamo la modalità di modifica
         this.loading.set(false); // impostiamo lo stato di caricamento a false, cioe abbiamo finito di caricare l'immagine
         this.photos.update(photos => [...photos, photo]); // aggiungiamo la nuova foto all'array di foto esistente
-        if(!this.memberService.member()?.imageUrl){ //controllo quando carico una foto se c'è o meno una foto profilo
+        if(!this.memberService.member()?.imageUrl && photo.isApproved){ //controllo quando carico una foto se c'è o meno una foto profilo
           this.setMainLocalPhoto(photo) //se non c'è imposto come foto principale
         }
       },

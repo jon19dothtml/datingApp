@@ -14,8 +14,8 @@ export class InitService {
     return this.accountService.refreshToken().pipe( //richiamiamo il metodo che crea il refreshToken
       tap(user=> {
         if(user){
-          this.accountService.currentUser.set(user); //il signal currentUser non è più null e viene settato con l'utente ottenuto dal localstorage
-          this.likeService.getLikeIds(); //ci richiamiamo il metodo che richiama l api che ritornava la lista di tutti i membri a cui il currentuser ha messo like
+          this.accountService.setCurrentUser(user); //il signal currentUser non è più null e viene settato con l'utente ottenuto dal localstorage
+          // this.likeService.getLikeIds(); //ci richiamiamo il metodo che richiama l api che ritornava la lista di tutti i membri a cui il currentuser ha messo like
           this.accountService.startTokenRefreshInterval(); //richiamo il metodo che crea un token ogni 5 min
         }
       })  

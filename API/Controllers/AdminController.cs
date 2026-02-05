@@ -1,13 +1,15 @@
 using System;
-using API.Entities;
+using Core.Entities;
+using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Core.DTOs;
 
 namespace API.Controllers;
 
-public class AdminController(UserManager<AppUser> userManager) : BaseApiController
+public class AdminController(UserManager<AppUser> userManager, IUnitOfWork uow, IPhotoService photoService) : BaseApiController
 {
     [Authorize(Policy = "RequiredAdminRole")]
     [HttpGet("users-with-roles")]
@@ -53,9 +55,60 @@ public class AdminController(UserManager<AppUser> userManager) : BaseApiControll
 
     [Authorize(Policy = "ModeratePhotoRole")]
     [HttpGet("photos-to-moderate")]
-    public ActionResult GetPhotosForModeration()
+    public async Task<ActionResult<IEnumerable<Photo>>> GetPhotosForModeration()
     {
-        return Ok("Admins or moderators can see this");
+        var photo = await uow.PhotoRepository.GetUnapprovedPhotos();
+        var photoList = new List<PhotoForApprovalDto>();
+        foreach(var p in photo){
+            var photoDto = new PhotoForApprovalDto
+            {
+                Id = p.Id,
+                Url = p.Url,
+                UserId = p.MemberId,
+                IsApproved = p.IsApproved
+            };
+            photoList.Add(photoDto);
+        }
+        return Ok(photoList);
+    }
+
+    [Authorize(Policy = "ModeratePhotoRole")]
+    [HttpPost("approve-photo/{photoId}")]
+    public async Task<ActionResult> ApprovePhoto(int photoId)
+    {
+        var photo= await uow.PhotoRepository.GetPhotoById(photoId);
+        if(photo==null) return BadRequest("Could not get photo from db");
+        photo.IsApproved=true;
+
+        var member= await uow.MemberRepository.getMemberForUpdate(photo.MemberId); //ci recuperiamo il membro loggato
+        if(member==null) return BadRequest("Could not get member");
+        if(member.ImageUrl == null)  //se non abbiamo ancora un'immagine principale 
+        {
+            member.ImageUrl= photo.Url; //impostiamo questa come immagine principale
+            member.User.ImageUrl= photo.Url; //aggiorniamo anche l'immagine dell'utente
+        }
+
+        await uow.Complete();
+        return Ok();
+    }
+
+    [Authorize(Policy = "ModeratePhotoRole")]
+    [HttpPost("reject-photo/{photoId}")]
+    public async Task<ActionResult> RejectPhoto(int photoId)
+    {
+        var photo= await uow.PhotoRepository.GetPhotoById(photoId);
+        if(photo==null) return BadRequest("Could not get photo from db");
+        if(photo.PublicId != null) //controlliamo se è presente anche in cloudinary
+        {
+            var result= await photoService.DeletePhotoAsync(photo.PublicId);
+            if(result.Result == "ok") uow.PhotoRepository.RemovePhoto(photo);
+        }
+        else 
+        { //altrimenti vorrà dire che è presente solo sul nostro db
+            uow.PhotoRepository.RemovePhoto(photo);
+        }
+        await uow.Complete();
+        return Ok();
     }
     
 }

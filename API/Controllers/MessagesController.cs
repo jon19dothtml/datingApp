@@ -1,11 +1,12 @@
 using System;
-using API.DTOs;
-using API.Interfaces;
-using API.Helpers;
+using Core.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Core.Interfaces;
+using Core.Entities;
+using Infrastructure.Extensions;
+using Core.Helpers;
+using API.DTOs;
 
-using API.Entities;
-using API.Extensions;
 
 namespace API.Controllers;
 
@@ -25,9 +26,24 @@ public class MessagesController(IUnitOfWork uow) : BaseApiController
             SenderId= sender.Id,
             RecipientId= recipient.Id,
             Content= createMessageDto.Content,
+            Sender = sender,
+            Recipient = recipient
         };
         uow.MessageRepository.AddMessage(message);
-        if(await uow.Complete()) return message.ToDto();
+        MessageDto messageDto = new MessageDto
+        {
+            Id = message.Id,
+            SenderId = message.SenderId,
+            SenderDisplayName = message.Sender.DisplayName,
+            SenderImageUrl = message.Sender.ImageUrl,
+            RecipientId = message.RecipientId,
+            RecipientDisplayName = message.Recipient.DisplayName,
+            RecipientImageUrl = message.Recipient.ImageUrl,
+            Content = message.Content,
+            DateRead = message.DateRead,
+            MessageSent = message.MessageSent
+        };
+        if (await uow.Complete()) return messageDto;        //message.ToDto();
 
         return BadRequest("Failed to send message");
     }
@@ -36,13 +52,47 @@ public class MessagesController(IUnitOfWork uow) : BaseApiController
     public async Task<ActionResult<PaginatedResult<MessageDto>>> GetMessagesByContainer([FromQuery]MessageParams messageParams)
     {
         messageParams.MemberId= User.GetMemberId();
-        return await uow.MessageRepository.GetMessagesForMember(messageParams);
+        var messages= await uow.MessageRepository.GetMessagesForMember(messageParams);
+        var dtoItems = messages.Items.Select(m => new MessageDto
+        {
+            Id = m.Id,
+            SenderId = m.SenderId,
+            SenderDisplayName = m.Sender?.DisplayName ?? string.Empty,
+            SenderImageUrl = m.Sender?.ImageUrl,
+            RecipientId = m.RecipientId,
+            RecipientDisplayName = m.Recipient?.DisplayName ?? string.Empty,
+            RecipientImageUrl = m.Recipient?.ImageUrl,
+            Content = m.Content,
+            DateRead = m.DateRead,
+            MessageSent = m.MessageSent
+        }).ToList();
+
+        var result = new PaginatedResult<MessageDto>
+        {
+            Metadata = messages.Metadata,
+            Items = dtoItems
+        };
+        return Ok(result); 
     }
 
     [HttpGet("thread/{recipientId}")]
     public async Task<ActionResult<IReadOnlyList<MessageDto>>> GetMessageThread(string recipientId)
     {
-        return Ok(await uow.MessageRepository.GetMessageThread(User.GetMemberId(), recipientId));
+        var messagesThread = await uow.MessageRepository.GetMessageThread(User.GetMemberId(), recipientId);
+        var dtoItems = messagesThread.Select(m => new MessageDto
+        {
+            Id = m.Id,
+            SenderId = m.SenderId,
+            SenderDisplayName = m.Sender.DisplayName,
+            SenderImageUrl = m.Sender.ImageUrl,
+            RecipientId = m.RecipientId,
+            RecipientDisplayName = m.Recipient.DisplayName,
+            RecipientImageUrl = m.Recipient.ImageUrl,
+            Content = m.Content,
+            DateRead = m.DateRead,
+            MessageSent = m.MessageSent
+        });
+        return Ok(dtoItems);
     }
 
     [HttpDelete("{id}")]

@@ -1,3 +1,4 @@
+using Core.Helpers;
 using System;
 
 namespace API.Helpers;
@@ -10,4 +11,6 @@ public class MemberParams : PagingParams
     public int MaxAge { get; set; }=100;
 
     public string OrderBy { get; set; }= "lastActive";
+    public string? City {get; set;}
+    public string? Country {get; set;}
 }

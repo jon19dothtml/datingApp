@@ -51,13 +51,39 @@
                         <option value="lastActive">Last active members</option>
                     </select>
                 </label>
+
+
+                <label class="flex justify-between items-center">
+                    <span class="font-semibold">City:</span>
+                    
+                    <select name="orderBy" class="select" [(ngModel)]="memberParams().city">
+                        <option disabled>**City**</option>
+                        <option selected value="">All the cities</option>
+                        @for (city of cities; track $index) {
+                            <option [value]="city">{{city}}</option> 
+                            <!--occhio a mettere le [] a value se vogliamo assegnarli un valore di 
+                            ciò che prendiamo dal component-->
+                        }
+                    </select>
+                </label>
+
+                <label class="flex justify-between items-center">
+                    <span class="font-semibold">Select Country: </span>
+                    
+                        <div class="flex gap-3">
+                            <input 
+                            type="text"
+                            class="input w-70"
+                            placeholder="Search Country"
+                            [(ngModel)]="memberParams().country"
+                            name="country"
+                            >
+                        </div> 
+                </label>
             </div>
         </div>
-
-
-
     <div class="modal-action">
-      <button (click)="submit()" class="btn btn-primary">Submit</button>
+        <button (click)="submit()" class="btn btn-primary">Submit</button>
     </div>
   </div>
 

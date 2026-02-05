@@ -1,10 +1,11 @@
 using System;
-using API.Data;
-using API.Entities;
-using API.Extensions;
+using Infrastructure.Data;
 using API.Helpers;
-using API.Interfaces;
+using Core.Interfaces;
+using Core.Entities;
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Core.Helpers;
 
 namespace API.Controllers;
 

@@ -14,7 +14,8 @@ export type Member = {
 export type Photo = {
   id: number
   url: string
-  publicId?: any
+  publicId?: string
+  isApproved: boolean
   memberId: string
 }
 
@@ -32,4 +33,6 @@ export class MemberParams { //definiamo una classe e non un tipo perchè essa pu
   pageSize=10;
   pageNumber=1;
   orderBy= 'lastActive'
+  city?: string;
+  country?: string;
 }

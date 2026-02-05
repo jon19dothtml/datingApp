@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 using System.Text.Json;
-using API.Errors;
+using Core.Errors;
 
 namespace API.Middleware;
 

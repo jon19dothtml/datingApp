@@ -1,9 +1,9 @@
 using System.Security.Claims;
-using API.DTOs;
-using API.Entities;
-using API.Extensions;
-using API.Helpers;
-using API.Interfaces;
+using Core.DTOs;
+using Core.Helpers;
+using Core.Entities;
+using Core.Interfaces;
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +36,8 @@ namespace API.Controllers
         [HttpGet("{id}/photos")]
         public async Task<ActionResult<IReadOnlyList<Photo>>> GetMemberPhotos(string id)
         {
-            return Ok(await uow.MemberRepository.GetPhotosByMemberIdAsync(id));
+            var isCurrentUser= User.GetMemberId() == id; //== return boolean value
+            return Ok(await uow.MemberRepository.GetPhotosByMemberIdAsync(id, isCurrentUser));
         }
 
         [HttpPut]
@@ -82,11 +83,11 @@ namespace API.Controllers
                 MemberId= User.GetMemberId()
             };
 
-            if(member.ImageUrl == null)  //se non abbiamo ancora un'immagine principale 
-            {
-                member.ImageUrl= photo.Url; //impostiamo questa come immagine principale
-                member.User.ImageUrl= photo.Url; //aggiorniamo anche l'immagine dell'utente
-            }
+            // if(member.ImageUrl == null)  //se non abbiamo ancora un'immagine principale 
+            // {
+            //     member.ImageUrl= photo.Url; //impostiamo questa come immagine principale
+            //     member.User.ImageUrl= photo.Url; //aggiorniamo anche l'immagine dell'utente
+            // }
 
             member.Photos.Add(photo); //aggiungiamo la foto alla collezione di foto del membro
 
@@ -141,5 +142,18 @@ namespace API.Controllers
 
         return BadRequest("Problem deleting photo");
     }
+
+    [HttpGet("cities")]
+    public async Task<IReadOnlyList<string>> GetCities()
+    { 
+        return await uow.MemberRepository.GetCities();
+    }
+
+    [HttpGet("countries")]
+    public async Task<IReadOnlyList<string>> GetCountries()
+    {
+        return await uow.MemberRepository.GetCountries();
+    }
+
     }
 }
