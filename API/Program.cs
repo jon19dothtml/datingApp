@@ -105,6 +105,9 @@ builder.Services.AddScoped<ITokenService, TokenService>();
     //transient significa che viene creato ogni volta che viene richiesto
     //singleton significa che viene creato una volta sola per tutta l'applicazione
 builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<IMessageHubService, MessageHubService>();
+builder.Services.AddScoped<IUserMangerService, UserManagerService>();
+builder.Services.AddScoped<IHubService, HubService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<LogUserActivity>(); //aggiungiamo il nostro action filter come servizio iniettabile
 builder.Services.Configure<CloudinarySettings>(builder.Configuration

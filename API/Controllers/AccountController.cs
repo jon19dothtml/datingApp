@@ -9,14 +9,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Extensions;
 using Core.DTOs;
+using Infrastructure.Services;
 
 
 namespace API.Controllers;
 
-public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService) : BaseApiController
+public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService, IUserMangerService userMangerService) : BaseApiController
 {
     [HttpPost("register")] //api/account/register
-    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+    public async Task<ActionResult<User>> Register(RegisterDto registerDto)
     {
         // if (await EmailExists(registerDto.Email))
         //     return BadRequest("Email is already in use");
@@ -53,20 +54,14 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         await userManager.AddToRoleAsync(user, "Member"); //aggiungiamo un ruolo a chi si registra
 
         await SetRefreshTokenCookie(user);
-        var userDto = new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email!,
-            DisplayName = user.DisplayName,
-            ImageUrl = user.ImageUrl,
-            Token = await tokenService.CreateToken(user)
-        };
-        return userDto; //passiamo solo il tokenService come argomento,
+        var userD = userMangerService.MapUser(user).Result;
+        return userD;
+        //passiamo solo il tokenService come argomento,
         //perche l'oggetto user viene passato implicitamente come parametro this tramite il metodo di estensione
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+    public async Task<ActionResult<User>> Login(LoginDto loginDto)
     {
         var user= await userManager.FindByEmailAsync(loginDto.Email);
 
@@ -77,20 +72,13 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         if(!result) return Unauthorized("Invalid password");
 
         await SetRefreshTokenCookie(user);
-        var userDto = new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email!,
-            DisplayName = user.DisplayName,
-            ImageUrl = user.ImageUrl,
-            Token = await tokenService.CreateToken(user)
-        };
+        var userD = userMangerService.MapUser(user).Result;
 
-        return userDto;
+        return userD;
     }
 
     [HttpPost("refresh-token")]
-    public async Task<ActionResult<UserDto>> RefreshToken()
+    public async Task<ActionResult<User>> RefreshToken()
     {
         var refreshToken= Request.Cookies["refreshToken"];
         if(refreshToken==null) return NoContent();
@@ -100,15 +88,8 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
 
         if(user==null) return Unauthorized();
         await SetRefreshTokenCookie(user);
-        var userDto = new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email!,
-            DisplayName = user.DisplayName,
-            ImageUrl = user.ImageUrl,
-            Token = await tokenService.CreateToken(user)
-        };
-        return userDto;
+        var userD= userMangerService.MapUser(user).Result;
+        return userD;
     }
 
     private async Task SetRefreshTokenCookie(AppUser user)

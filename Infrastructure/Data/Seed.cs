@@ -10,26 +10,11 @@ namespace Infrastructure.Data;
 
 public class Seed
 {
-    public sealed record LocalSeedUserDto()
-    {
-        public required string Id { get; set; }
-        public required string Email { get; set; }
-        public DateOnly DateOfBirth { get; set; }
-        public string? ImageUrl { get; set; }
-        public required string DisplayName { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime LastActive { get; set; }
-        public required string Gender { get; set; }
-        public string? Description { get; set; }
-        public required string City { get; set; }
-        public required string Country { get; set; }
-    }
-
     public static async Task SeedUser(UserManager<AppUser> userManager)
     {
         if (await userManager.Users.AnyAsync()) return;
         var memberData= await File.ReadAllTextAsync("UserSeedData.json");
-        var members= JsonSerializer.Deserialize<List<LocalSeedUserDto>>(memberData);
+        var members= JsonSerializer.Deserialize<List<SeedUser>>(memberData);
         if (members == null)
         {
             Console.WriteLine("No menbers in seed data");
