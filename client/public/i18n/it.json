@@ -1,0 +1,21 @@
+{
+    "home.title": "Trova il tuo partner",
+    "home.come": "Tutto ciò che devi fare è venire",
+    "home.register": "Registrati",
+    "home.more": "Scopri di più",
+    "register.signup": "Registrati",
+    "register.cred": "Credenziali",
+    "register.profile": "Profilo",
+    "register.dispname": "Nome",
+    "register.confpassw": "Conferma Password",
+    "register.cancelbtn": "Cancella",
+    "register.nextbtn": "Avanti",
+    "register.gender": "Genere",
+    "register.male": "Maschio",
+    "register.female": "Femmina",
+    "register.dob": "Data di nascita",
+    "register.city": "Città",
+    "register.country": "Nazione",
+    "register.backbtn": "Indietro",
+    "register.registerbtn": "Registrati"
+}

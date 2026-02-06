@@ -1,5 +1,6 @@
-import { Component, input, Self } from '@angular/core';
+import { Component, computed, inject, input, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-text-input',
@@ -12,6 +13,9 @@ export class TextInput implements ControlValueAccessor {
   label= input<string>('');
   type= input<string>('text')
   maxDate= input<string>('')
+  private translate= inject(TranslateService)
+  
+  translatedLabel = computed(() => this.translate.instant(this.label()));
 
   constructor(@Self() public ngControl: NgControl){
     this.ngControl.valueAccessor= this; //stiamo dicendo che questa classe (TextInput) sarà il value accessor per il controllo del form associato a questo componente
@@ -33,4 +37,8 @@ export class TextInput implements ControlValueAccessor {
     //lo convertiamo perchè ngControl.control è di tipo AbstractControl che è una classe base più generica
     //questo lo facciamo per rendere più semplice l'accesso al controllo del form nel template HTML
   }
+
+  // translateLabel(label: string): string {
+  //   return this.translate.instant(label);
+  // }
 }

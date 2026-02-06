@@ -2,10 +2,11 @@ import { Component, inject, Input, signal } from '@angular/core';
 import { Register } from "../account/register/register";
 import { User } from '../../types/user';
 import { AccountService } from '../../core/services/account-service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
-  imports: [Register],
+  imports: [Register, TranslatePipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

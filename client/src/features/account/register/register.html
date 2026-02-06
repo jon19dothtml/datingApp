@@ -1,24 +1,24 @@
 <div class="card bg-base-100 w-1/2 mx-auto flex flex-col p-6 rounded-lg shadow-lg">
-    <div class="card-title justify-center text-3xl text-primary">Sign Up</div>
+    <div class="card-title justify-center text-3xl text-primary">{{"register.signup" | translate}}</div>
     <div class="card-body w-full">
 
         <ul class="steps">
-            <li class="step step-primary">Credentials</li>
-            <li class="step" [class.step-primary]="currentStep() === 2">Profile</li>
+            <li class="step step-primary">{{"register.cred" | translate}}</li>
+            <li class="step" [class.step-primary]="currentStep() === 2">{{"register.profile" | translate}}</li>
         </ul>
         @if (currentStep()===1) {
             <form [formGroup]="credentialsForm" (ngSubmit)="register()" class="flex flex-col gap-4 w-full steps">
-            <app-text-input label="Email" class="mt-2" formControlName="email"/>
-            <app-text-input label="Display Name" formControlName="displayName"/>
-            <app-text-input label="Password" formControlName="password" type="password"/>
-            <app-text-input label="Confirm Password" formControlName="confirmPassword" type="password"/> 
+            <app-text-input label="register.email" class="mt-2" formControlName="email"/>
+            <app-text-input label="register.dispname" formControlName="displayName"/>
+            <app-text-input label="register.password" formControlName="password" type="password"/>
+            <app-text-input label="register.confpassw"  formControlName="confirmPassword" type="password"/> 
             
             <div class="flex items-center justify-end gap-3">
-                <button (click)="cancel()" class="btn" type="button">Cancel</button>
+                <button (click)="cancel()" class="btn" type="button">{{"register.cancelbtn" | translate}}</button>
                 <button 
                     [disabled]="!credentialsForm.valid"
                     (click)="nextStep()"
-                    class="btn btn-primary" type="button">Next</button>
+                    class="btn btn-primary" type="button">{{"register.nextbtn" | translate}}</button>
             </div>
         </form>
         }
@@ -27,31 +27,31 @@
             <form [formGroup]="profileForm" (ngSubmit)="register()" class="flex flex-col gap-4 w-full steps">
                 <!-- <div>Profile form goes here</div> -->
                 <div class="flex items-center gap-4">
-                    <div class="font-semibold">Gender:</div>
+                    <div class="font-semibold">{{"register.gender" | translate}}</div>
                     <label class="flex gap-3  items-center">
-                        <span>Male</span>
+                        <span>{{"register.male" | translate}}</span>
                         <input type="radio" formControlName="gender" value="male"
                             class="radio radio-primary"> 
                     </label>
                     <label class="flex gap-3  items-center">
-                        <span>Female</span>
+                        <span>{{"register.female" | translate}}</span>
                         <input type="radio" formControlName="gender" value="female"
                             class="radio radio-primary"> 
                     </label>
                 </div>
                 <app-text-input 
                     [maxDate]="getMaxDate()"
-                    type="date" label="Date of birth" class="mt-2" formControlName="dateOfBirth"/>
-                <app-text-input label="City" class="mt-2" formControlName="city"/>
-                <app-text-input label="Country" class="mt-2" formControlName="country"/>
+                    type="date" label="register.dob" class="mt-2" formControlName="dateOfBirth"/>
+                <app-text-input label="register.city" class="mt-2" formControlName="city"/>
+                <app-text-input label="register.country" class="mt-2" formControlName="country"/>
 
                 <!--down here button-->
                 <div class="flex items-center justify-end gap-3">
-                <button (click)="prevStep()" class="btn" type="button">Back</button>
+                <button (click)="prevStep()" class="btn" type="button">{{"register.backbtn" | translate}}</button>
                 <button 
                     [disabled]="!profileForm.valid"
                     (click)="register()"
-                    class="btn btn-primary" type="button">Register</button>
+                    class="btn btn-primary" type="button">{{"register.registerbtn" | translate}}</button>
                 </div>
             </form>
         }

@@ -1,0 +1,23 @@
+{
+    "home.title": "Find your match",
+    "home.come": "Come on in... all you need tp do is sign up",
+    "home.register": "Register",
+    "home.more": "Learn more",
+    "register.signup": "Register",
+    "register.cred": "Credentials",
+    "register.profile": "Profile",
+    "register.email": "Email",
+    "register.dispname": "Display name",
+    "register.password": "Password",
+    "register.confpassw": "Confirm Password",
+    "register.cancelbtn": "Cancel",
+    "register.nextbtn": "Next",
+    "register.gender": "Gender",
+    "register.male": "Male",
+    "register.female": "Female",
+    "register.dob": "Date of birth",
+    "register.city": "City",
+    "register.country": "Country",
+    "register.backbtn": "Back",
+    "register.registerbtn": "Register"
+}

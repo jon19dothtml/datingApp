@@ -6,6 +6,7 @@ import { ToastService } from '../../core/services/toast-service';
 import { themes } from '../themes';
 import { BusyService } from '../../core/services/busy-service';
 import { HasRole } from '../../shared/directives/has-role';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-nav',
@@ -22,6 +23,13 @@ export class Nav implements OnInit{
   protected selectedTheme= signal<string>(localStorage.getItem('theme') || 'light')
   protected themes= themes;
   protected loading= signal(false);
+  protected translate= inject(TranslateService)
+
+  constructor(){
+    this.translate.addLangs(['en', 'it']);
+    this.translate.setFallbackLang('en');
+    this.translate.use('en');
+  }
 
   ngOnInit(): void {
     document.documentElement.setAttribute('data-theme', this.selectedTheme())
@@ -58,6 +66,11 @@ export class Nav implements OnInit{
         this.loading.set(false);
       }
     })
+  }
+
+  changeLang(lang: string){
+    this.translate.use(lang);
+    localStorage.setItem('lang', lang);
   }
 
   logout(){
