@@ -80,7 +80,7 @@ public class AdminController(UserManager<AppUser> userManager, IUnitOfWork uow, 
         if(photo==null) return BadRequest("Could not get photo from db");
         photo.IsApproved=true;
 
-        var member= await uow.MemberRepository.getMemberForUpdate(photo.MemberId); //ci recuperiamo il membro loggato
+        var member= await uow.MemberRepository.GetMemberForUpdate(photo.MemberId); //ci recuperiamo il membro loggato
         if(member==null) return BadRequest("Could not get member");
         if(member.ImageUrl == null)  //se non abbiamo ancora un'immagine principale 
         {

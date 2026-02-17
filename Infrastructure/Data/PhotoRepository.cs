@@ -10,7 +10,7 @@ namespace Infrastructure.Data;
 public class PhotoRepository(AppDbContext context) : IPhotoRepository
 {
 
-    public async Task<Photo?> GetPhotoById(int photoId)
+    public async Task<Photo?> GetPhotoById(int photoId) //no AsNoTracking perchè modifico una sua prop nell'admin controller
     {
         return await context.Photos
             .IgnoreQueryFilters()
@@ -21,6 +21,7 @@ public class PhotoRepository(AppDbContext context) : IPhotoRepository
     {
         return await context.Photos
             .IgnoreQueryFilters()
+            .AsNoTracking()
             .Where(x=> x.IsApproved==false)
             .ToListAsync();
     }

@@ -14,7 +14,7 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
         return await context.Members.FindAsync(id);
     }
 
-    public async Task<Member?> getMemberForUpdate(string id)
+    public async Task<Member?> GetMemberForUpdate(string id) //qui no AsNoTracking in quanto nel controller modifico entità
     {
         return await context.Members
         .Include(x => x.User)
@@ -26,7 +26,7 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
     public async Task<PaginatedResult<Member>> GetMembersAsync(MemberParams memberParams)
     {
 
-        var query = context.Members.AsQueryable(); // qui creiamo una query di base per prendere tutti i membri
+        var query = context.Members.AsNoTracking().AsQueryable(); // qui creiamo una query di base per prendere tutti i membri
 
         query = query.Where(x => x.Id != memberParams.CurrentMemberId); //ritorna tutti i param
 
@@ -63,6 +63,7 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
     public async Task<IReadOnlyList<Photo>> GetPhotosByMemberIdAsync(string memberId, bool isCurrentUser)
     {
         var query = context.Members
+            .AsNoTracking()
             .Where(x => x.Id == memberId)
             .SelectMany(x => x.Photos);
 
@@ -72,27 +73,29 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
         }
         return await query.ToListAsync();
     }
-
-
-    public void Update(Member member)
-    {
-        context.Entry(member).State = EntityState.Modified; //qui diciamo che qualcosa di questa entità è stata modificata
-    }
+//to do: verificare stato context se modified
+    //public void Update(Member member)
+    //{
+    //    var state = context.Entry(member).State;
+    //     state = EntityState.Modified; //qui diciamo che qualcosa di questa entità è stata modificata
+    //}
 
     public async Task<IReadOnlyList<string>> GetCities()
     {
         return await context.Members
+            .AsNoTracking()
             .Select(c => c.City)
             .Where(c => c != null && c != "")
-            .Distinct()
+            .Distinct() //commentato per UnitTest
             .ToListAsync();
     }
     public async Task<IReadOnlyList<string>> GetCountries()
     {
         return await context.Members
+            .AsNoTracking()
             .Select(c => c.Country)
             .Where(c => c != null && c != "")
-            .Distinct()
+            .Distinct()  //commentato per UnitTest
             .ToListAsync();
     }
 }

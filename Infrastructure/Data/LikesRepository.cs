@@ -22,6 +22,7 @@ public class LikesRepository(AppDbContext context) : ILikesRepository
     public async Task<IReadOnlyList<string>> GetCurrentMemberLikeIds(string? memberId) //quando ritorna una lista si usa nel return un ToListAsync 
     {
         return await context.Likes
+            .AsNoTracking()
             .Where(x=> x.SourceMemberId == memberId) //controlliamo se il currentUser è uguale all'id che stiamo passando
             .Select(x=> x.TargetMemberId) //se è vero selezioniamo tutti i TargetMemberId, cioè tutti gli id dei membri a cui l'utente corrente ha messo like
             .ToListAsync();
@@ -34,7 +35,7 @@ public class LikesRepository(AppDbContext context) : ILikesRepository
 
     public async Task<PaginatedResult<Member>> GetMemberLikes(LikesParams likesParams) 
     {
-        var query= context.Likes.AsQueryable(); //creiamo una query di base sulla tabella Likes
+        var query= context.Likes.AsQueryable().AsNoTracking(); //creiamo una query di base sulla tabella Likes
         IQueryable<Member> result;
         switch (likesParams.Predicate)
         {

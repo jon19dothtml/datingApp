@@ -5,11 +5,11 @@ namespace Core.Interfaces;
 
 public interface IMemberRepository
 {
-    void Update(Member member);
+    //void Update(Member member);
     Task<PaginatedResult<Member>> GetMembersAsync(MemberParams memberParams);
     Task<Member?> GetMemberByIdAsync(string id);
     Task<IReadOnlyList<Photo>> GetPhotosByMemberIdAsync(string memberId, bool isCurrentUser);
-    Task<Member?> getMemberForUpdate(string id);
+    Task<Member?> GetMemberForUpdate(string id);
     Task<IReadOnlyList<string>> GetCities();
     Task<IReadOnlyList<string>> GetCountries();
 

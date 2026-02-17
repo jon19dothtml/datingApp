@@ -7,7 +7,7 @@ namespace Infrastructure.Data;
 
 public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>(options)
 {
-    public DbSet<Member> Members { get; set; }
+    public virtual DbSet<Member> Members { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<MemberLike> Likes {get; set;}
     public DbSet<Message> Messages {get; set;}
@@ -17,6 +17,8 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        //modelBuilder.Entity<Member>().HasIndex(c => c.City).IsUnique();
 
         modelBuilder.Entity<Photo>().HasQueryFilter(x=> x.IsApproved);
 

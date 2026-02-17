@@ -36,6 +36,7 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
         return context.Groups
             .Include(x=> x.Connections)
             .Where(x=> x.Connections.Any(c=> c.ConnectionId == connectionId))
+            .AsNoTracking()
             .FirstOrDefault();
     }
 
@@ -44,6 +45,7 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
         return await context.Messages
            .Include(m => m.Sender)
            .Include(m => m.Recipient)
+           .AsNoTracking()
            .SingleOrDefaultAsync(x => x.Id == messageId);
     }
 
@@ -51,6 +53,7 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
     {
         return await context.Groups
             .Include(x=> x.Connections)
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Name == groupName);
     }
 
@@ -60,6 +63,7 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
             .Include(m => m.Sender)
             .Include(m => m.Recipient)
             .OrderByDescending(x => x.MessageSent)
+            .AsNoTracking()
             .AsQueryable();
 
         query = messageParams.Container switch
@@ -77,6 +81,7 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
     {
         await context.Messages
             .Where(x=> x.RecipientId == currentMemberId && x.SenderId==recipientId && x.DateRead== null)// il recipientId passato nel metodo è l'altro utente, il sender
+            .AsNoTracking()
             .ExecuteUpdateAsync(setters=> setters.SetProperty(x=> x.DateRead, DateTime.UtcNow)); // modifichiamo direttamente il db prima che di restituirli all'utente
 
         //return await context.Messages
@@ -95,6 +100,7 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
             .Where(x => (x.RecipientId == currentMemberId && x.RecipientDeleted == false && x.SenderId == recipientId)
                 || (x.SenderId == currentMemberId && x.SenderDeleted == false && x.RecipientId == recipientId))
             .OrderBy(x => x.MessageSent)
+            .AsNoTracking()
             //.Select(MessageExtensions.ToDtoProjection())
             .ToListAsync();
     }
