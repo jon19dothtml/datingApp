@@ -1,0 +1,1 @@
+import{Pa as i}from"./chunk-IPNZFUD7.js";var s=class r{transform(n){let e=new Date,t=new Date(n),a=e.getFullYear()-t.getFullYear(),o=e.getMonth()-t.getMonth();return(o<0||o===0&&e.getDate()<t.getDate())&&a--,a}static \u0275fac=function(e){return new(e||r)};static \u0275pipe=i({name:"age",type:r,pure:!0})};export{s as a};

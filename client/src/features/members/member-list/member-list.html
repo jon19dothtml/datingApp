@@ -20,7 +20,7 @@
 
         </div>
     @if (paginatedResult.items; as members) {
-        <div class="grid grid-cols-5 gap-3">
+        <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             @for (member of members; track member.id) {
             <app-member-card [member]="member" /> <!-- passo il singolo member al componente member-card 
                         quel [member] si riferisce al member corrente -->
@@ -42,6 +42,5 @@
     (closeModal)="onClose()" 
     (submitData)="onFilterChange($event)" 
 />
-
 
 

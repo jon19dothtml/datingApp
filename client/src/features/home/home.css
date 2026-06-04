@@ -1,0 +1,56 @@
+.home-shell {
+    background:
+        radial-gradient(circle at top right, color-mix(in srgb, var(--color-primary) 16%, transparent), transparent 35%),
+        radial-gradient(circle at left center, rgba(85, 139, 47, 0.12), transparent 28%);
+}
+
+.home-hero-layout {
+    display: grid;
+}
+
+.showcase-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 16%, transparent);
+    border-radius: 2rem;
+    padding: 1.5rem;
+    background: color-mix(in srgb, var(--color-base-100) 88%, white 12%);
+    box-shadow: 0 24px 60px rgba(20, 40, 29, 0.14);
+}
+
+.showcase-chat::after {
+    content: '';
+    position: absolute;
+    inset: auto -10% -30% auto;
+    width: 12rem;
+    height: 12rem;
+    border-radius: 999px;
+    background: rgba(104, 159, 56, 0.12);
+    filter: blur(12px);
+}
+
+.showcase-profile {
+    background: linear-gradient(180deg, rgba(220, 237, 200, 0.88), rgba(255, 255, 255, 0.92));
+}
+
+.profile-orb {
+    position: absolute;
+    top: -2rem;
+    right: -2rem;
+    width: 10rem;
+    height: 10rem;
+    border-radius: 999px;
+    background: rgba(56, 142, 60, 0.16);
+    filter: blur(12px);
+}
+
+.home-ball {
+    filter: drop-shadow(0 14px 25px rgba(46, 125, 50, 0.25));
+}
+
+@media (min-width: 1024px) {
+    .home-hero-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(22rem, 34rem);
+        align-items: center;
+    }
+}

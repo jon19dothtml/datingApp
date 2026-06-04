@@ -1,0 +1,18 @@
+.member-card {
+    border: 1px solid color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.member-card__placeholder {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at top, rgba(104, 159, 56, 0.35), transparent 42%),
+        linear-gradient(145deg, rgba(46, 125, 50, 0.9), rgba(20, 40, 29, 0.92));
+    color: white;
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}

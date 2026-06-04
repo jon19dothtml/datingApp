@@ -21,6 +21,16 @@ export class MemberCard {
   protected hasLiked= computed(()=> this.likeService.likeIds().includes(this.member().id)) // con questo computed signal calcoliamo se la card che viene mostrata è piaciuta al currentUser
   protected isOnline= computed(() =>
     this.presenceService.onlineUsers().includes(this.member().id))
+  protected initials = computed(() =>
+    this.member()
+      .displayName
+      .split(' ')
+      .map(name => name[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase())
+  protected descriptionPreview = computed(() =>
+    this.member().description?.slice(0, 110) || 'Ready for new tennis matches and good conversations.')
 
   toggleLike(event:Event){
     event.stopPropagation(); //evita la propagazione delle route verso il profilo del member

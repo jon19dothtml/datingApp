@@ -1,5 +1,5 @@
-<header class="p-3 w-full fixed top-0 z-50 bg-linear-to-r from-primary to-black">
-    <div class="flex aligne-middle items-center px-10 mx-auto gap-5">
+<header class="p-3 w-full fixed top-0 z-50 border-b border-white/10 bg-linear-to-r from-[#255f38] via-[#2e7d32] to-[#14281d] shadow-2xl backdrop-blur">
+    <div class="flex aligne-middle items-center px-6 xl:px-10 mx-auto gap-5">
         <div class="text-white">
             <a routerLink="/" routerLinkActive="text-accent" [routerLinkActiveOptions]="{exact:true}"
                 class="flex items-center gap-3 max-h-16 border-r-white border-r-2 pr-6">
@@ -26,8 +26,10 @@
             <span class="loading loading-spinner text-accent"></span>
         }
 
-        <button (click)="changeLang('en')">EN</button>
-        <button (click)="changeLang('it')">IT</button>
+        <div class="join text-white/90">
+            <button (click)="changeLang('en')" class="btn btn-xs join-item btn-ghost text-white hover:bg-white/10">EN</button>
+            <button (click)="changeLang('it')" class="btn btn-xs join-item btn-ghost text-white hover:bg-white/10">IT</button>
+        </div>
 
         <div class="flex align-middle ml-auto gap-3">
             <div class="dropdown mr-5 dropdown-end">
