@@ -14,25 +14,26 @@
                 <div class="text-sm">
                     {{member.city}}, {{member.country}}
                 </div>
+                <div class="badge badge-outline badge-primary mt-1">🎾 Tennis Player</div>
             </div>
             <div class="divider"></div>
             <ul class="menu rounded-box w-full text-xl">
-                <li><a routerLink="profile" routerLinkActive="text-primary">Profile</a></li>
-                <li><a routerLink="photos" routerLinkActive="text-primary">Photos</a></li>
+                <li><a routerLink="profile" routerLinkActive="text-primary">🎾 Profile</a></li>
+                <li><a routerLink="photos" routerLinkActive="text-primary">📷 Photos</a></li>
                 @if(!isCurrentUser()){
-                    <li><a routerLink="messages" routerLinkActive="text-primary">Messages</a></li>
+                    <li><a routerLink="messages" routerLinkActive="text-primary">💬 Message</a></li>
                 }
                 
             </ul>
 
             <div class="card-actions justify-between gap-2 px-2 mb-3">
-                <button routerLink="/members" class="btn btn-info flex-1">Go Back</button>
+                <button routerLink="/members" class="btn btn-info flex-1">Back to Players</button>
                 <button 
                     (click)="likesService.toggleLike(member.id)"
                     [class.btn-error]="hasLiked()"
                     [class.btn-success]="!hasLiked()"
                     class="btn flex-1"
-                >{{hasLiked() ? 'Remove Like' : 'Like user'}}</button>
+                >{{hasLiked() ? 'Remove Favorite' : 'Add Favorite ⭐'}}</button>
             </div>
         </div>
     </div>

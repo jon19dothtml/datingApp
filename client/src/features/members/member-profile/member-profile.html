@@ -1,14 +1,14 @@
 @if(memberService.member(); as member){
 <div class="flex flex-col gap-3">
     <div class="flex gap-3">
-        <span class="font-semibold">Member Since:</span>
+        <span class="font-semibold">Player Since:</span>
         <span>{{member.created | date: 'longDate'}}</span>
     </div>
     <div class="flex gap-3">
         <span class="font-semibold">Last Active:</span>
         <span>{{member.lastActive | timeAgo }}</span>
     </div>
-    <h3 class="text-lg font-semibold text-primary">About {{member.displayName}}:</h3>
+    <h3 class="text-lg font-semibold text-primary">About {{member.displayName}}'s Game:</h3>
     @if (memberService.editMode()) {
     <form #editForm="ngForm" (ngSubmit)="updateProfile()" class="flex flex-col w-full gap-4">
         <!--il form deve avere lo stesso nome che ho nel viewChild -->
@@ -19,9 +19,9 @@
             <!-- il placeholder serve per far funzionare la floating label. NgModel per il two-way binding -->
         </label>
         <label class="floating-label">
-            <span>description</span>
+            <span>About my game</span>
             <textarea name="description" class="textarea w-full" [(ngModel)]="editableMember.description"
-                placeholder="Description"></textarea>
+                placeholder="About my game"></textarea>
             <!-- il placeholder serve per far funzionare la floating label. NgModel per il two-way binding -->
         </label>
         <label class="floating-label">
@@ -43,7 +43,7 @@
         </div>
     </form>
     }@else {
-    <div> {{member.description || 'No description provided yet'}} </div> }
+    <div> {{member.description || 'No player description provided yet'}} </div> }
 
 </div>
 }

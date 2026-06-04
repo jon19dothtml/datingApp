@@ -2,11 +2,21 @@
 <!-- <button class="btn" onclick="my_modal_1.showModal()">open modal</button> -->
 <dialog #filterModal class="modal"> <!--quel #filterModal si riferisce al viewChild nel component-->
   <div class="modal-box max-w-lg">
-    <h3 class="text-lg font-bold">Select Filters</h3>
+    <h3 class="text-lg font-bold">🎾 Find Tennis Players</h3>
         <div class="flex justify-between w-full items-center mt-6">
             <div class="flex flex-col w-full gap-6">
                 <label class="flex justify-between items-center">
-                    <span class="font-semibold">Select Gender:</span> 
+                    <span class="font-semibold">Skill Level: </span>
+                    <select name="skillLevel" class="select">
+                        <option disabled selected>Any level</option>
+                        <option value="beginner">🟢 Beginner</option>
+                        <option value="intermediate">🟡 Intermediate</option>
+                        <option value="advanced">🟠 Advanced</option>
+                        <option value="pro">🔴 Pro</option>
+                    </select>
+                </label>
+                <label class="flex justify-between items-center">
+                    <span class="font-semibold">Gender:</span> 
                         <form class="filter">
                             <input type="reset" value="x" class="btn btn-square">
                             <input type="radio" class="btn" 
@@ -23,7 +33,7 @@
                         </form>
                 </label>
                 <label class="flex justify-between items-center">
-                    <span class="font-semibold">Select Age: </span>
+                    <span class="font-semibold">Age Range: </span>
                     <div class="flex gap-3">
                         <input 
                         type="number"
@@ -47,8 +57,8 @@
                     <span class="font-semibold">Order By:</span>
                     <select name="orderBy" class="select" [(ngModel)]="memberParams().orderBy">
                         <option disabled selected>Order by</option>
-                        <option value="created">Newest members</option>
-                        <option value="lastActive">Last active members</option>
+                        <option value="created">Newest players</option>
+                        <option value="lastActive">Recently active</option>
                     </select>
                 </label>
 

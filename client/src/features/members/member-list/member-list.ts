@@ -84,18 +84,18 @@ export class MemberList implements OnInit{
     const filters: string[] = []
 
     if(this.updatedParams.gender){
-      filters.push(this.updatedParams.gender + 's')
+      filters.push(this.updatedParams.gender + ' players')
     }else{
-      filters.push('Males, Females')
+      filters.push('All players')
     }
 
     if(this.updatedParams.minAge !== defaultParams.minAge || this.updatedParams.maxAge !== defaultParams.maxAge){
       filters.push(` ages ${this.updatedParams.minAge}-${this.updatedParams.maxAge}`)
     }
 
-    filters.push(this.updatedParams.orderBy === 'lastActive' ? 'Recently active' : 'Newest members')
+    filters.push(this.updatedParams.orderBy === 'lastActive' ? 'Recently active' : 'Newest players')
 
-    return filters.length > 0 ? `Selected ${filters.join(' | ')}` : 'All Members' 
+    return filters.length > 0 ? `Showing: ${filters.join(' | ')}` : 'All Players' 
   }
 
   getCities(){

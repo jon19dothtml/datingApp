@@ -23,9 +23,9 @@ export class Lists implements OnInit{
   
 
   tabs= [
-    {label: 'Liked', value: 'liked'},
-    {label: 'Liked me', value: 'likedBy'},
-    {label: 'Mutual', value: 'mutual'},
+    {label: '⭐ My Favorites', value: 'liked'},
+    {label: '🎾 Fans', value: 'likedBy'},
+    {label: '🤝 Partners', value: 'mutual'},
   ]
 
   ngOnInit(): void {
