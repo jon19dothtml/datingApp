@@ -49,7 +49,7 @@
 
         <p class="text-sm leading-6 text-base-content/70">
             {{descriptionPreview()}}
-            @if(member.description?.length > 110) {
+            @if((member.description || '').length > 110) {
                 <span>...</span>
             }
         </p>
