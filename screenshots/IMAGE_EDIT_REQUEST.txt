@@ -1,0 +1,1 @@
+Modifica richiesta non eseguibile direttamente: il file `screenshots/00b_register_step1.png` è un'immagine binaria e non posso editarne i pixel con gli strumenti disponibili in questa sessione. Per procedere servirebbe un file immagine già modificato da caricare oppure istruzioni per rigenerarla tramite uno strumento esterno.
