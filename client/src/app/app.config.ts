@@ -7,6 +7,7 @@ import { lastValueFrom } from 'rxjs';
 import { errorInterceptor } from '../core/interceptors/error-interceptor';
 import { jwtInterceptor } from '../core/interceptors/jwt-interceptor';
 import { loadingInterceptor } from '../core/interceptors/loading-interceptor';
+import { mockInterceptor } from '../core/interceptors/mock-interceptor';
 import {provideTranslateService} from "@ngx-translate/core";
 import {provideTranslateHttpLoader} from '@ngx-translate/http-loader';
 
@@ -16,7 +17,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withViewTransitions()),
-    provideHttpClient(withInterceptors([errorInterceptor, jwtInterceptor, loadingInterceptor])),
+    provideHttpClient(withInterceptors([mockInterceptor, errorInterceptor, jwtInterceptor, loadingInterceptor])),
     provideTranslateService({
       loader: provideTranslateHttpLoader({
         prefix: '/i18n/',
