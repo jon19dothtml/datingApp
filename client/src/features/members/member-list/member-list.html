@@ -2,8 +2,8 @@
     <div class="flex flex-col w-full">
         <div class="flex justify-between items-center">
             <div class="flex gap-3 items-center">
-                <button (click)="openModal()" class="btn btn-primary">Select Filter</button>
-                <button (click)="resetFilters()" class="btn btn-neutral">Reset Filter</button>
+                <button (click)="openModal()" class="btn btn-primary">Filter Players</button>
+                <button (click)="resetFilters()" class="btn btn-neutral">Reset</button>
                 <div class="text-lg bg-base-100 py-2 px-4 border rounded-lg text-primary capitalize">
                     {{displayMessage}}
                 </div>
@@ -20,7 +20,7 @@
 
         </div>
     @if (paginatedResult.items; as members) {
-        <div class="grid grid-cols-5 gap-3">
+        <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             @for (member of members; track member.id) {
             <app-member-card [member]="member" /> <!-- passo il singolo member al componente member-card 
                         quel [member] si riferisce al member corrente -->
@@ -42,6 +42,5 @@
     (closeModal)="onClose()" 
     (submitData)="onFilterChange($event)" 
 />
-
 
 

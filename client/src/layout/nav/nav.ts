@@ -20,7 +20,7 @@ export class Nav implements OnInit{
   protected busyService = inject(BusyService);
   protected creds: any = {}
   private router = inject(Router);
-  protected selectedTheme= signal<string>(localStorage.getItem('theme') || 'light')
+  protected selectedTheme= signal<string>(localStorage.getItem('theme') || 'garden')
   protected themes= themes;
   protected loading= signal(false);
   protected translate= inject(TranslateService)

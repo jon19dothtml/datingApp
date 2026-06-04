@@ -1,44 +1,74 @@
 @if(memberService.member(); as member){
-<div class="flex gap-6">
-    <div class="card bg-base-100 flex flex-col h-[85vh] w-1/4">
-        <img src="{{member.imageUrl || '/user.png'}}" alt="image of member"
-            class="rounded-full mx-10 mt-3 object-cover">
-        <div class="card-body">
-            <div class="flex flex-col items-center">
-                <div class="flex text-2xl text-primary items-center">
-                    {{member.displayName}}, {{member.dateOfBirth | age}}
+<div class="member-detailed-shell flex flex-col gap-6 pb-8">
+    <section class="member-hero card bg-base-100 shadow-2xl">
+        <div class="member-hero__layout">
+            <div class="member-hero__media">
+                <div class="member-hero__glow"></div>
+                <img src="{{member.imageUrl || '/user.png'}}" alt="image of member"
+                    class="member-hero__image">
+            </div>
+
+            <div class="card-body gap-5">
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="badge badge-primary badge-outline">🎾 Tennis Player</div>
+                    <div class="badge badge-success badge-outline">Match friendly</div>
                     @if(presenceService.onlineUsers().includes(member.id)){
-                        <span class="status status-success status-xl ml-3"></span>
+                        <div class="badge badge-success gap-2 text-white">
+                            <span class="status status-success"></span>
+                            Online now
+                        </div>
                     }
                 </div>
-                <div class="text-sm">
-                    {{member.city}}, {{member.country}}
+
+                <div>
+                    <div class="flex flex-wrap items-center gap-3 text-4xl font-black text-primary">
+                        <span>{{member.displayName}}, {{member.dateOfBirth | age}}</span>
+                    </div>
+                    <p class="mt-2 text-lg text-base-content/65">{{member.city}}, {{member.country}}</p>
+                </div>
+
+                <p class="max-w-3xl text-base leading-7 text-base-content/75">
+                    {{member.description || 'A tennis lover ready to connect, rally, and turn matches into real plans.'}}
+                </p>
+
+                <div class="grid gap-3 sm:grid-cols-3">
+                    <div class="rounded-3xl bg-base-200/80 p-4">
+                        <div class="text-xs uppercase tracking-[0.2em] text-base-content/45">Home court</div>
+                        <div class="mt-2 text-lg font-semibold">{{member.city}}</div>
+                    </div>
+                    <div class="rounded-3xl bg-base-200/80 p-4">
+                        <div class="text-xs uppercase tracking-[0.2em] text-base-content/45">Status</div>
+                        <div class="mt-2 text-lg font-semibold">{{hasLiked() ? 'Favorite player' : 'Open to connect'}}</div>
+                    </div>
+                    <div class="rounded-3xl bg-base-200/80 p-4">
+                        <div class="text-xs uppercase tracking-[0.2em] text-base-content/45">Profile mode</div>
+                        <div class="mt-2 text-lg font-semibold">{{isCurrentUser() ? 'Editable' : 'Read only'}}</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+                    <button routerLink="/members" class="btn btn-outline btn-primary">Back to Players</button>
+                    <button 
+                        (click)="likesService.toggleLike(member.id)"
+                        [class.btn-error]="hasLiked()"
+                        [class.btn-success]="!hasLiked()"
+                        class="btn min-w-48"
+                    >{{hasLiked() ? 'Remove Favorite' : 'Add Favorite ⭐'}}</button>
+                </div>
+
+                <div class="tabs tabs-box tabs-lg w-fit bg-base-200/80 p-1">
+                    <a routerLink="profile" routerLinkActive="tab-active" class="tab rounded-2xl">🎾 Profile</a>
+                    <a routerLink="photos" routerLinkActive="tab-active" class="tab rounded-2xl">📷 Photos</a>
+                    @if(!isCurrentUser()){
+                        <a routerLink="messages" routerLinkActive="tab-active" class="tab rounded-2xl">💬 Message</a>
+                    }
                 </div>
             </div>
-            <div class="divider"></div>
-            <ul class="menu rounded-box w-full text-xl">
-                <li><a routerLink="profile" routerLinkActive="text-primary">Profile</a></li>
-                <li><a routerLink="photos" routerLinkActive="text-primary">Photos</a></li>
-                @if(!isCurrentUser()){
-                    <li><a routerLink="messages" routerLinkActive="text-primary">Messages</a></li>
-                }
-                
-            </ul>
-
-            <div class="card-actions justify-between gap-2 px-2 mb-3">
-                <button routerLink="/members" class="btn btn-info flex-1">Go Back</button>
-                <button 
-                    (click)="likesService.toggleLike(member.id)"
-                    [class.btn-error]="hasLiked()"
-                    [class.btn-success]="!hasLiked()"
-                    class="btn flex-1"
-                >{{hasLiked() ? 'Remove Like' : 'Like user'}}</button>
-            </div>
         </div>
-    </div>
+    </section>
 
-    <div class="card bg-base-100 w-3/4 p-6 flex flex-col h-[85vh]">
-        <div class="flex justify-between items-center">
+    <section class="card bg-base-100 p-6 shadow-xl">
+        <div class="flex flex-wrap justify-between gap-4 items-center">
             <h3 class="card-title text-3xl text-primary">{{title$()}}</h3>
             @if (isCurrentUser()) {
                 <button
@@ -52,11 +82,10 @@
 
 
         <div class="divider"></div>
-        <div class="h-full">
+        <div class="min-h-[45vh]">
             <router-outlet></router-outlet>
-            <!-- grazie a questo outlet possiamo caricare i componenti figli -->
         </div>
-    </div>
+    </section>
 </div>
 } @else {
 <div>Member Not Found</div>

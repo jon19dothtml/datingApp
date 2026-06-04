@@ -1,11 +1,11 @@
 {
-    "home.title": "Find your match",
-    "home.come": "Come on in... all you need tp do is sign up",
-    "home.register": "Register",
+    "home.title": "Find your tennis partner",
+    "home.come": "Join us — find players at your level and book your next match!",
+    "home.register": "Join Now",
     "home.more": "Learn more",
-    "register.signup": "Register",
+    "register.signup": "Create Account",
     "register.cred": "Credentials",
-    "register.profile": "Profile",
+    "register.profile": "Player Profile",
     "register.email": "Email",
     "register.dispname": "Display name",
     "register.password": "Password",
@@ -19,5 +19,5 @@
     "register.city": "City",
     "register.country": "Country",
     "register.backbtn": "Back",
-    "register.registerbtn": "Register"
+    "register.registerbtn": "Create Account"
 }

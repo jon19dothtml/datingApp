@@ -37,7 +37,7 @@
     </div>
     <div class="flex join w-full">
         <input [(ngModel)]="messageContent" class="input w-full" 
-            placeholder="Enter your message" (keydown.enter)="sendMessage()"> <!--qui non usiamo propriamente un form anche se usiamo le funzionalità
+            placeholder="Message your tennis partner..." (keydown.enter)="sendMessage()"> <!--qui non usiamo propriamente un form anche se usiamo le funzionalità
             dei FomrsModule come il two-way binding. Inoltre per inviare il messaggio possimao usare l'evento del keydown sul tasto invio-->
         <button (click)="sendMessage()" type="submit" class="btn btn-primary join-item">Send</button>
     </div>

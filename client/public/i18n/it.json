@@ -1,11 +1,11 @@
 {
-    "home.title": "Trova il tuo partner",
-    "home.come": "Tutto ciò che devi fare è venire",
-    "home.register": "Registrati",
+    "home.title": "Trova il tuo partner di tennis",
+    "home.come": "Unisciti a noi — trova giocatori al tuo livello e prenota il prossimo match!",
+    "home.register": "Iscriviti",
     "home.more": "Scopri di più",
-    "register.signup": "Registrati",
+    "register.signup": "Crea Account",
     "register.cred": "Credenziali",
-    "register.profile": "Profilo",
+    "register.profile": "Profilo Giocatore",
     "register.dispname": "Nome",
     "register.confpassw": "Conferma Password",
     "register.cancelbtn": "Cancella",
@@ -17,5 +17,5 @@
     "register.city": "Città",
     "register.country": "Nazione",
     "register.backbtn": "Indietro",
-    "register.registerbtn": "Registrati"
+    "register.registerbtn": "Crea Account"
 }

@@ -1,34 +1,123 @@
-<div class="hero bg-base-200 min-h-screen">
+<div class="home-shell min-h-screen bg-base-200">
     @if (!registerMode()) {
-    <div class="hero-content text-center">
-        <div class="flex flex-col items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                class="size-42 text-primary">
-                <path
-                    d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" />
-            </svg>
-            <h1 class="text-5xl font-bold">{{ 'home.title' | translate}}</h1>
-            <p class="py-6">{{'home.come' | translate}}</p>
-            <div class="flex items-center gap-3">
-                @if(!accountService.currentUser()){
-                    <button (click)="showRegister(true)" class="btn btn-primary btn-lg">{{'home.register' | translate}}</button>
-                }
-                <button class="btn-info btn-lg">{{"home.more" | translate}}</button>
+    <section class="hero min-h-screen px-4 py-24 lg:px-8">
+        <div class="hero-content home-hero-layout w-full max-w-7xl gap-12 px-0">
+            <div class="max-w-2xl text-center lg:text-left">
+                <div class="badge badge-lg border-none bg-primary/15 px-4 py-4 text-primary shadow-sm">
+                    Green court mode enabled
+                </div>
+                <div class="mt-6 flex justify-center lg:justify-start">
+                    <span class="home-ball text-8xl leading-none select-none">🎾</span>
+                </div>
+                <h1 class="mt-6 text-5xl font-black tracking-tight lg:text-7xl">{{ 'home.title' | translate}}</h1>
+                <p class="py-6 text-lg text-base-content/75 lg:text-xl">{{'home.come' | translate}}</p>
+
+                <div class="grid gap-3 sm:grid-cols-3">
+                    <div class="rounded-3xl border border-primary/10 bg-base-100/80 p-4 shadow-lg">
+                        <div class="text-3xl font-black text-primary">100%</div>
+                        <div class="text-sm text-base-content/65">grass-inspired refresh</div>
+                    </div>
+                    <div class="rounded-3xl border border-primary/10 bg-base-100/80 p-4 shadow-lg">
+                        <div class="text-3xl font-black text-primary">24/7</div>
+                        <div class="text-sm text-base-content/65">mock chat vibes on display</div>
+                    </div>
+                    <div class="rounded-3xl border border-primary/10 bg-base-100/80 p-4 shadow-lg">
+                        <div class="text-3xl font-black text-primary">1 tap</div>
+                        <div class="text-sm text-base-content/65">to jump into player profiles</div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+                    @if(!accountService.currentUser()){
+                        <button (click)="showRegister(true)" class="btn btn-primary btn-lg shadow-lg">{{'home.register' | translate}}</button>
+                    }
+                    <button class="btn btn-outline btn-primary btn-lg">{{"home.more" | translate}}</button>
+                </div>
+            </div>
+
+            <div class="grid w-full max-w-3xl gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+                <article class="showcase-card showcase-chat">
+                    <div class="mb-5 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary/70">Mocked chat</p>
+                            <h2 class="text-2xl font-bold">A warmer way to preview conversations</h2>
+                        </div>
+                        <div class="badge badge-primary badge-outline">Live look</div>
+                    </div>
+
+                    <div class="flex flex-col gap-4">
+                        @for (message of showcaseMessages; track message.author + message.time) {
+                            <div class="chat" [class.chat-end]="message.currentUser" [class.chat-start]="!message.currentUser">
+                                <div class="chat-image avatar placeholder">
+                                    <div class="w-11 rounded-full border border-primary/20 bg-primary/10 text-sm font-bold text-primary">
+                                        <span>{{message.initials}}</span>
+                                    </div>
+                                </div>
+                                <div class="chat-header text-sm font-semibold">
+                                    {{message.author}}
+                                    <time class="ml-2 text-xs font-normal opacity-60">{{message.time}}</time>
+                                </div>
+                                <div class="chat-bubble max-w-xs shadow-md" [class.chat-bubble-primary]="message.currentUser">
+                                    {{message.content}}
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </article>
+
+                <article class="showcase-card showcase-profile">
+                    <div class="profile-orb"></div>
+                    <div class="relative z-10 flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <div class="badge badge-primary badge-outline">Featured profile</div>
+                            <span class="text-xs uppercase tracking-[0.25em] text-base-content/50">Fresh layout</span>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <div class="avatar placeholder">
+                                <div class="w-20 rounded-3xl bg-primary text-primary-content text-2xl font-black shadow-lg">
+                                    <span>SR</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-3xl font-black">{{featuredPlayer.name}}, {{featuredPlayer.age}}</h3>
+                                <p class="text-base-content/65">{{featuredPlayer.city}}, {{featuredPlayer.country}}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid gap-3 sm:grid-cols-2">
+                            <div class="rounded-2xl bg-base-100/80 p-4 shadow-md">
+                                <div class="text-xs uppercase tracking-[0.2em] text-base-content/45">Level</div>
+                                <div class="mt-1 font-semibold text-primary">{{featuredPlayer.level}}</div>
+                            </div>
+                            <div class="rounded-2xl bg-base-100/80 p-4 shadow-md">
+                                <div class="text-xs uppercase tracking-[0.2em] text-base-content/45">Availability</div>
+                                <div class="mt-1 font-semibold text-primary">{{featuredPlayer.availability}}</div>
+                            </div>
+                        </div>
+
+                        <p class="rounded-3xl bg-base-100/80 p-5 text-base text-base-content/75 shadow-md">
+                            {{featuredPlayer.description}}
+                        </p>
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="badge badge-success badge-outline">Topspin</span>
+                            <span class="badge badge-primary badge-outline">Weekly matches</span>
+                            <span class="badge badge-accent badge-outline">Brunch after tennis</span>
+                        </div>
+                    </div>
+                </article>
             </div>
         </div>
-    </div>
+    </section>
     }
-    @else { <!-- se registerMode è true mostra il componente di registrazione -->
-        <div class="w-full flex text-2xl text-center justify-center">
+    @else {
+        <div class="w-full flex text-2xl text-center justify-center py-24">
             <app-register class="w-full"
             (cancelRegister)="showRegister($event)"  
             ></app-register> 
-            <!--- $event riceve gli eventi in uscita dal nostro componente register 
-            qui in pratica eseguo cancelRegister e dico che se viene spinto su cancel-> emit false 
-            e quindi torna indietro altrimenti se rimane true mostra il componente di registrazione -->
         </div>
     }
-
 </div>
 
 

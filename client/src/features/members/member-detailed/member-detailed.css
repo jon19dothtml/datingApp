@@ -1,0 +1,47 @@
+.member-detailed-shell {
+    margin-top: 0.5rem;
+}
+
+.member-hero {
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.member-hero__layout {
+    display: grid;
+    gap: 0;
+}
+
+.member-hero__media {
+    position: relative;
+    min-height: 22rem;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at top, rgba(104, 159, 56, 0.38), transparent 36%),
+        linear-gradient(135deg, rgba(46, 125, 50, 0.96), rgba(20, 40, 29, 0.96));
+}
+
+.member-hero__glow {
+    position: absolute;
+    inset: auto auto -4rem -3rem;
+    width: 12rem;
+    height: 12rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    filter: blur(18px);
+}
+
+.member-hero__image {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    padding: 2rem;
+}
+
+@media (min-width: 1024px) {
+    .member-hero__layout {
+        grid-template-columns: minmax(18rem, 24rem) minmax(0, 1fr);
+    }
+}

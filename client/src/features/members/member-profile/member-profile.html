@@ -1,14 +1,77 @@
 @if(memberService.member(); as member){
 <div class="flex flex-col gap-3">
     <div class="flex gap-3">
-        <span class="font-semibold">Member Since:</span>
+        <span class="font-semibold">Player Since:</span>
         <span>{{member.created | date: 'longDate'}}</span>
     </div>
     <div class="flex gap-3">
         <span class="font-semibold">Last Active:</span>
         <span>{{member.lastActive | timeAgo }}</span>
     </div>
-    <h3 class="text-lg font-semibold text-primary">About {{member.displayName}}:</h3>
+
+    <!-- Tennis Stats Section -->
+    <div class="divider my-1"></div>
+    <h3 class="text-lg font-semibold text-primary">🎾 Tennis Stats</h3>
+    <div class="grid grid-cols-2 gap-3">
+        <div class="stat bg-base-200 rounded-xl px-4 py-2">
+            <div class="stat-title text-xs">Skill Level</div>
+            <div class="stat-value text-lg text-primary">Intermediate</div>
+            <div class="stat-desc">NTRP 3.5</div>
+        </div>
+        <div class="stat bg-base-200 rounded-xl px-4 py-2">
+            <div class="stat-title text-xs">Years Playing</div>
+            <div class="stat-value text-lg text-primary">5 yrs</div>
+            <div class="stat-desc">Since 2020</div>
+        </div>
+        <div class="stat bg-base-200 rounded-xl px-4 py-2">
+            <div class="stat-title text-xs">Matches Played</div>
+            <div class="stat-value text-lg text-success">42</div>
+            <div class="stat-desc">Win rate 60%</div>
+        </div>
+        <div class="stat bg-base-200 rounded-xl px-4 py-2">
+            <div class="stat-title text-xs">Ranking</div>
+            <div class="stat-value text-lg text-warning">#128</div>
+            <div class="stat-desc">Regional</div>
+        </div>
+    </div>
+
+    <!-- Playing Preferences -->
+    <div class="divider my-1"></div>
+    <h3 class="text-lg font-semibold text-primary">🏆 Playing Preferences</h3>
+    <div class="flex flex-col gap-2">
+        <div class="flex justify-between items-center">
+            <span class="font-semibold text-sm">Playing Style:</span>
+            <span class="badge badge-outline badge-primary">Baseline 🧱</span>
+        </div>
+        <div class="flex justify-between items-center">
+            <span class="font-semibold text-sm">Preferred Court:</span>
+            <div class="flex gap-1">
+                <span class="badge badge-sm badge-warning">Clay 🟤</span>
+                <span class="badge badge-sm badge-ghost">Hard</span>
+            </div>
+        </div>
+        <div class="flex justify-between items-center">
+            <span class="font-semibold text-sm">Looking For:</span>
+            <div class="flex gap-1">
+                <span class="badge badge-sm badge-success">Singles</span>
+                <span class="badge badge-sm badge-info">Training</span>
+            </div>
+        </div>
+        <div class="flex justify-between items-center">
+            <span class="font-semibold text-sm">Availability:</span>
+            <div class="flex gap-1">
+                <span class="badge badge-sm badge-neutral">Weekends</span>
+                <span class="badge badge-sm badge-neutral">Evenings</span>
+            </div>
+        </div>
+        <div class="flex justify-between items-center">
+            <span class="font-semibold text-sm">Favourite Player:</span>
+            <span class="text-sm">Rafael Nadal 🏅</span>
+        </div>
+    </div>
+
+    <div class="divider my-1"></div>
+    <h3 class="text-lg font-semibold text-primary">About {{member.displayName}}'s Game:</h3>
     @if (memberService.editMode()) {
     <form #editForm="ngForm" (ngSubmit)="updateProfile()" class="flex flex-col w-full gap-4">
         <!--il form deve avere lo stesso nome che ho nel viewChild -->
@@ -16,34 +79,30 @@
             <span>Display Name</span>
             <input name="displayName" class="input w-full" [(ngModel)]="editableMember.displayName"
                 placeholder="Display Name">
-            <!-- il placeholder serve per far funzionare la floating label. NgModel per il two-way binding -->
         </label>
         <label class="floating-label">
-            <span>description</span>
+            <span>About my game</span>
             <textarea name="description" class="textarea w-full" [(ngModel)]="editableMember.description"
-                placeholder="Description"></textarea>
-            <!-- il placeholder serve per far funzionare la floating label. NgModel per il two-way binding -->
+                placeholder="About my game"></textarea>
         </label>
         <label class="floating-label">
             <span>City</span>
             <input name="city" class="input w-full" [(ngModel)]="editableMember.city"
                 placeholder="City">
-            <!-- il placeholder serve per far funzionare la floating label. NgModel per il two-way binding -->
         </label>
         <label class="floating-label">
             <span>Country</span>
             <input name="country" class="input w-full" [(ngModel)]="editableMember.country"
                 placeholder="Country">
-            <!-- il placeholder serve per far funzionare la floating label. NgModel per il two-way binding -->
         </label>
         <div class="flex self-end">
             <button 
             [disabled]="!editForm.dirty" 
-            type="submit" class="btn btn-success">Submit</button> <!--disabled se il form non e' dirty (non e' stato modificato) in questo caso utilizzo l'editForm di ngForm-->
+            type="submit" class="btn btn-success">Submit</button>
         </div>
     </form>
     }@else {
-    <div> {{member.description || 'No description provided yet'}} </div> }
+    <div> {{member.description || 'No player description provided yet'}} </div> }
 
 </div>
 }
